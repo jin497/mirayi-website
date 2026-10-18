@@ -1397,7 +1397,7 @@ def write_static():
         "/blog-categories/* /blog 301\n", encoding="utf-8")
     (ROOT / "_headers").write_text(
         "/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n"
-        "/admin/*\n  X-Robots-Tag: noindex\n  Cache-Control: no-store\n" + "".join(f"/{l}/*\n  Content-Language: {META[l]['header']}\n" for l in LANGS) + "/assets/*\n  Cache-Control: public, max-age=86400\n/assets/img/*\n  Cache-Control: public, max-age=31536000, immutable\n",
+        "/admin/*\n  X-Robots-Tag: noindex\n  Cache-Control: no-store\n" + "".join(f"/{l}/*\n  Content-Language: {META[l]['header']}\n" for l in LANGS) + "/assets/site.js\n  Cache-Control: public, max-age=3600\n/assets/portfolio.js\n  Cache-Control: public, max-age=3600\n/assets/style.css\n  Cache-Control: public, max-age=3600\n/assets/config.js\n  Cache-Control: no-cache\n/assets/works.js\n  Cache-Control: no-cache\n/assets/img/*\n  Cache-Control: public, max-age=31536000, immutable\n",
         encoding="utf-8")
 
 
