@@ -2,7 +2,7 @@
 # >>> Change the repo line below to your own GitHub repository (see README.md, "Editing yourself"). <<<
 backend:
   name: github
-  repo: YOUR-GITHUB-USERNAME/mirayi-website
+  repo: jin497/mirayi-website
   branch: main
   base_url: https://www.mirayi.my
   auth_endpoint: api/auth
