@@ -1,0 +1,403 @@
+# Mirayi website editor (Decap CMS). Open https://www.mirayi.my/admin to use it.
+# >>> Change the repo line below to your own GitHub repository (see README.md, "Editing yourself"). <<<
+backend:
+  name: github
+  repo: YOUR-GITHUB-USERNAME/mirayi-website
+  branch: main
+  base_url: https://www.mirayi.my
+  auth_endpoint: api/auth
+
+publish_mode: simple
+media_folder: assets/img
+public_folder: /assets/img
+locale: en
+site_url: https://www.mirayi.my
+display_url: https://www.mirayi.my
+show_preview_links: false
+
+collections:
+  # ------------------------------------------------------------ blog
+  - name: posts
+    label: Blog posts
+    label_singular: Blog post
+    folder: content/posts
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}} — {{published | date('YYYY-MM-DD')}}"
+    sortable_fields: [published, title]
+    fields:
+      - {label: Title (shown on the page), name: title, widget: string}
+      - {label: Search-engine title (blank = same as title), name: seo_title, widget: string, required: false}
+      - {label: Author, name: author, widget: string, default: Mirayi}
+      - {label: Published date, name: published, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss.SSS[Z]", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: true}
+      - {label: Last updated (optional), name: modified, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss.SSS[Z]", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: true, required: false}
+      - {label: Main picture, name: image, widget: image, required: false}
+      - {label: Picture width (leave empty for a new upload), name: image_w, widget: number, required: false}
+      - {label: Picture height (leave empty for a new upload), name: image_h, widget: number, required: false}
+      - {label: Google description (about 150 characters), name: meta_desc, widget: text, required: false}
+      - {label: Social-share description (blank = same as Google description), name: og_desc, widget: text, required: false}
+      - {label: Short preview on the blog list (blank = automatic), name: excerpt, widget: text, required: false}
+      - {label: Reading time, e.g. "3 min read" (blank = automatic), name: read, widget: string, required: false}
+      - {label: Body, name: body, widget: markdown}
+
+  # ------------------------------------------------------------ guide pages
+  - name: pages
+    label: Guide pages (extra website pages)
+    label_singular: Guide page
+    folder: content/pages
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{slug}}"
+    summary: "{{title}}"
+    fields:
+      - {label: Page heading (H1), name: title, widget: string}
+      - {label: Google title (about 60 characters), name: seo_title, widget: string}
+      - {label: Google description (about 150 characters), name: description, widget: text}
+      - {label: Keywords (optional), name: keywords, widget: text, required: false}
+      - {label: Introduction (shown under the heading), name: intro, widget: text}
+      - {label: Main picture (used when the page is shared), name: image, widget: image, required: false}
+      - {label: Picture width (leave empty for a new upload), name: image_w, widget: number, required: false}
+      - {label: Picture height (leave empty for a new upload), name: image_h, widget: number, required: false}
+      - {label: Published date, name: published, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss.SSS[Z]", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: true}
+      - {label: Last updated (change when you edit the page), name: modified, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss.SSS[Z]", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: true, required: false}
+      - label: Frequently asked questions
+        name: faq
+        widget: list
+        required: false
+        summary: "{{fields.q}}"
+        fields:
+          - {label: Question, name: q, widget: string}
+          - {label: Answer, name: a, widget: text}
+      - {label: Legal page (privacy or terms, no article data and no quote strip), name: legal, widget: boolean, default: false, required: false}
+      - {label: Body, name: body, widget: markdown}
+
+  # ------------------------------------------------------------ Chinese pages
+  - name: zh_pages
+    label: 中文页面 (Chinese pages)
+    label_singular: Chinese page
+    folder: content/zh
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{slug}}"
+    filter: {field: title, pattern: ".+"}
+    summary: "{{title}}  ({{slug}})"
+    fields:
+      - {label: Page heading (H1), name: title, widget: string}
+      - {label: Google/Baidu title (about 30 Chinese characters), name: seo_title, widget: string}
+      - {label: Google/Baidu description (about 70-80 Chinese characters), name: description, widget: text}
+      - {label: Keywords, name: keywords, widget: text, required: false}
+      - {label: Introduction (under the heading; new line = line break), name: intro, widget: text, required: false}
+      - {label: Main picture (used when shared), name: image, widget: image, required: false}
+      - {label: Picture width (leave empty for a new upload), name: image_w, widget: number, required: false}
+      - {label: Picture height (leave empty for a new upload), name: image_h, widget: number, required: false}
+      - {label: "Show portfolio (true for the full list)", name: portfolio, widget: boolean, default: false, required: false}
+      - {label: "Portfolio shows only: ip or service (leave empty for both)", name: portfolio_kinds, widget: string, required: false}
+      - {label: "Portfolio categories (series,film,commercial)", name: portfolio_cats, widget: string, required: false}
+      - {label: Show the IP / Services toggle, name: portfolio_filters, widget: boolean, default: false, required: false}
+      - {label: Show the production menu under the heading, name: subnav, widget: boolean, default: false, required: false}
+      - {label: "Gallery (type visdev for the visual development gallery)", name: gallery, widget: string, required: false}
+      - {label: Menu section that stays highlighted (who / brands / prod / join), name: active, widget: string, required: false}
+      - {label: Published date, name: published, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss.SSS[Z]", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: true}
+      - {label: Last updated, name: modified, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss.SSS[Z]", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: true, required: false}
+      - label: 常见问题 (FAQ)
+        name: faq
+        widget: list
+        required: false
+        summary: "{{fields.q}}"
+        fields:
+          - {label: Question, name: q, widget: string}
+          - {label: Answer, name: a, widget: text}
+      - {label: Body, name: body, widget: markdown}
+
+  # ------------------------------------------------------------ everything else
+  # ------------------------------------------------------------ Korean pages
+  - name: ko_pages
+    label: 한국어 페이지 (Korean pages)
+    label_singular: Korean page
+    folder: content/ko
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{slug}}"
+    filter: {field: title, pattern: ".+"}
+    summary: "{{title}}  ({{slug}})"
+    fields:
+      - {label: Page heading (H1), name: title, widget: string}
+      - {label: Google/Naver title (about 30 characters), name: seo_title, widget: string}
+      - {label: Google/Naver description (about 70-80 characters), name: description, widget: text}
+      - {label: Keywords, name: keywords, widget: text, required: false}
+      - {label: Introduction (under the heading; new line = line break), name: intro, widget: text, required: false}
+      - {label: Main picture (used when shared), name: image, widget: image, required: false}
+      - {label: Picture width (leave empty for a new upload), name: image_w, widget: number, required: false}
+      - {label: Picture height (leave empty for a new upload), name: image_h, widget: number, required: false}
+      - {label: "Show portfolio (true for the full list)", name: portfolio, widget: boolean, default: false, required: false}
+      - {label: "Portfolio shows only: ip or service (leave empty for both)", name: portfolio_kinds, widget: string, required: false}
+      - {label: "Portfolio categories (series,film,commercial)", name: portfolio_cats, widget: string, required: false}
+      - {label: Show the IP / Services toggle, name: portfolio_filters, widget: boolean, default: false, required: false}
+      - {label: Show the production menu under the heading, name: subnav, widget: boolean, default: false, required: false}
+      - {label: "Gallery (type visdev for the visual development gallery)", name: gallery, widget: string, required: false}
+      - {label: Menu section that stays highlighted (who / brands / prod / join), name: active, widget: string, required: false}
+      - {label: Published date, name: published, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss.SSS[Z]", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: true}
+      - {label: Last updated, name: modified, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss.SSS[Z]", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: true, required: false}
+      - label: FAQ
+        name: faq
+        widget: list
+        required: false
+        summary: "{{fields.q}}"
+        fields:
+          - {label: Question, name: q, widget: string}
+          - {label: Answer, name: a, widget: text}
+      - {label: Body, name: body, widget: markdown}
+
+  # ------------------------------------------------------------ everything else
+  # ------------------------------------------------------------ Japanese pages
+  - name: ja_pages
+    label: 日本語ページ (Japanese pages)
+    label_singular: Japanese page
+    folder: content/ja
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{slug}}"
+    filter: {field: title, pattern: ".+"}
+    summary: "{{title}}  ({{slug}})"
+    fields:
+      - {label: Page heading (H1), name: title, widget: string}
+      - {label: Google/Yahoo Japan title (about 30 characters), name: seo_title, widget: string}
+      - {label: Google/Yahoo Japan description (about 70-80 characters), name: description, widget: text}
+      - {label: Keywords, name: keywords, widget: text, required: false}
+      - {label: Introduction (under the heading; new line = line break), name: intro, widget: text, required: false}
+      - {label: Main picture (used when shared), name: image, widget: image, required: false}
+      - {label: Picture width (leave empty for a new upload), name: image_w, widget: number, required: false}
+      - {label: Picture height (leave empty for a new upload), name: image_h, widget: number, required: false}
+      - {label: "Show portfolio (true for the full list)", name: portfolio, widget: boolean, default: false, required: false}
+      - {label: "Portfolio shows only: ip or service (leave empty for both)", name: portfolio_kinds, widget: string, required: false}
+      - {label: "Portfolio categories (series,film,commercial)", name: portfolio_cats, widget: string, required: false}
+      - {label: Show the IP / Services toggle, name: portfolio_filters, widget: boolean, default: false, required: false}
+      - {label: Show the production menu under the heading, name: subnav, widget: boolean, default: false, required: false}
+      - {label: "Gallery (type visdev for the visual development gallery)", name: gallery, widget: string, required: false}
+      - {label: Menu section that stays highlighted (who / brands / prod / join), name: active, widget: string, required: false}
+      - {label: Published date, name: published, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss.SSS[Z]", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: true}
+      - {label: Last updated, name: modified, widget: datetime, format: "YYYY-MM-DDTHH:mm:ss.SSS[Z]", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: true, required: false}
+      - label: FAQ
+        name: faq
+        widget: list
+        required: false
+        summary: "{{fields.q}}"
+        fields:
+          - {label: Question, name: q, widget: string}
+          - {label: Answer, name: a, widget: text}
+      - {label: Body, name: body, widget: markdown}
+
+  # ------------------------------------------------------------ everything else
+  - name: site
+    label: Website content
+    files:
+      - name: works
+        label: Portfolio works (Mirayi IP / Services)
+        file: content/works.json
+        format: json
+        fields:
+          - label: Works
+            name: works
+            widget: list
+            summary: "{{fields.title}} · {{fields.kind}}"
+            fields:
+              - {label: Title, name: title, widget: string}
+              - label: Type
+                name: kind
+                widget: select
+                options:
+                  - {label: Mirayi IP (our own), value: ip}
+                  - {label: Services work (for clients), value: service}
+              - label: Category
+                name: cat
+                widget: select
+                options:
+                  - {label: Series, value: series}
+                  - {label: Film, value: film}
+                  - {label: Commercial, value: commercial}
+              - {label: Caption under the title, name: type, widget: string, required: false}
+              - {label: Picture, name: img, widget: image}
+              - {label: YouTube link (optional, makes the picture clickable), name: video, widget: string, required: false}
+              - {label: Extra tag on the picture (optional, e.g. Looking for co-producer), name: note, widget: string, required: false}
+              - {label: Picture width (leave empty for a new upload), name: w, widget: number, required: false}
+              - {label: Picture height (leave empty for a new upload), name: h, widget: number, required: false}
+              - {label: 中文标题 (Chinese title, optional), name: title_zh, widget: string, required: false}
+              - {label: 中文说明 (Chinese caption, optional), name: type_zh, widget: string, required: false}
+              - {label: 中文标签 (Chinese tag, optional), name: note_zh, widget: string, required: false}
+              - {label: Video link for Chinese visitors (e.g. Bilibili / Youku, optional), name: video_cn, widget: string, required: false}
+              - {label: 한국어 Korean title (optional), name: title_ko, widget: string, required: false}
+              - {label: 한국어 Korean caption (optional), name: type_ko, widget: string, required: false}
+              - {label: 한국어 Korean tag (optional), name: note_ko, widget: string, required: false}
+              - {label: 日本語 Japanese title (optional), name: title_ja, widget: string, required: false}
+              - {label: 日本語 Japanese caption (optional), name: type_ja, widget: string, required: false}
+              - {label: 日本語 Japanese tag (optional), name: note_ja, widget: string, required: false}
+
+      - name: home
+        label: Homepage text, slideshow and client logos
+        file: content/home.json
+        format: json
+        fields:
+          - label: Slideshow pictures
+            name: hero_slides
+            widget: list
+            summary: "{{fields.alt}}"
+            fields:
+              - {label: Picture (wide, about 1600 x 900), name: image, widget: image}
+              - {label: Short description of the picture, name: alt, widget: string}
+          - {label: Big headline on the slideshow, name: hero_title, widget: string}
+          - {label: Line under the headline, name: hero_lead, widget: string}
+          - label: Client logos
+            name: clients
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - {label: Company name, name: name, widget: string}
+              - {label: Logo, name: logo, widget: image}
+          - {label: Story picture, name: story_image, widget: image}
+          - {label: Story big number or year, name: story_year, widget: string}
+          - {label: Story heading 1, name: story_heading_1, widget: string}
+          - {label: Story text 1, name: story_text_1, widget: text}
+          - {label: Story heading 2, name: story_heading_2, widget: string}
+          - {label: Story text 2 (leave a blank line between paragraphs), name: story_text_2, widget: text}
+          - {label: What people say, name: testimonial_quote, widget: text}
+          - {label: What people say, who said it, name: testimonial_by, widget: string}
+          - {label: Rebate heading, name: rebate_title, widget: string}
+          - {label: Rebate text, name: rebate_text, widget: text}
+          - {label: Contact form intro line, name: contact_intro, widget: string}
+
+      - name: home_zh
+        label: 中文首页 (Chinese homepage text)
+        file: content/zh/home.json
+        format: json
+        fields:
+          - {label: Google/Baidu title, name: seo_title, widget: string}
+          - {label: Google/Baidu description, name: seo_description, widget: text}
+          - {label: Keywords, name: seo_keywords, widget: text, required: false}
+          - {label: Slideshow headline, name: hero_title, widget: string}
+          - {label: Line under the headline, name: hero_lead, widget: string}
+          - {label: Hidden summary for search engines, name: hero_sr, widget: text}
+          - {label: Clients intro, name: clients_intro, widget: string}
+          - {label: Services intro, name: services_intro, widget: string}
+          - {label: Game services intro, name: game_intro, widget: string}
+          - {label: Animation services intro, name: anim_intro, widget: string}
+          - {label: Works intro, name: work_intro, widget: text}
+          - {label: Story heading 1, name: story_heading_1, widget: string}
+          - {label: Story text 1, name: story_text_1, widget: text}
+          - {label: Story heading 2, name: story_heading_2, widget: string}
+          - {label: Story text 2 (blank line between paragraphs), name: story_text_2, widget: text}
+          - {label: Testimonial, name: testimonial_quote, widget: text}
+          - {label: Testimonial by, name: testimonial_by, widget: string}
+          - {label: Rebate heading, name: rebate_title, widget: string}
+          - {label: Rebate text, name: rebate_text, widget: text}
+          - {label: Contact form intro, name: contact_intro, widget: string}
+
+      - name: home_ko
+        label: 한국어 홈 (Korean homepage text)
+        file: content/ko/home.json
+        format: json
+        fields:
+          - {label: Google/Naver title, name: seo_title, widget: string}
+          - {label: Google/Naver description, name: seo_description, widget: text}
+          - {label: Keywords, name: seo_keywords, widget: text, required: false}
+          - {label: Slideshow headline, name: hero_title, widget: string}
+          - {label: Line under the headline, name: hero_lead, widget: string}
+          - {label: Hidden summary for search engines, name: hero_sr, widget: text}
+          - {label: Clients intro, name: clients_intro, widget: string}
+          - {label: Services intro, name: services_intro, widget: string}
+          - {label: Game services intro, name: game_intro, widget: string}
+          - {label: Animation services intro, name: anim_intro, widget: string}
+          - {label: Works intro, name: work_intro, widget: text}
+          - {label: Story heading 1, name: story_heading_1, widget: string}
+          - {label: Story text 1, name: story_text_1, widget: text}
+          - {label: Story heading 2, name: story_heading_2, widget: string}
+          - {label: Story text 2 (blank line between paragraphs), name: story_text_2, widget: text}
+          - {label: Testimonial, name: testimonial_quote, widget: text}
+          - {label: Testimonial by, name: testimonial_by, widget: string}
+          - {label: Rebate heading, name: rebate_title, widget: string}
+          - {label: Rebate text, name: rebate_text, widget: text}
+          - {label: Contact form intro, name: contact_intro, widget: string}
+
+      - name: home_ja
+        label: 日本語ホーム (Japanese homepage text)
+        file: content/ja/home.json
+        format: json
+        fields:
+          - {label: Google/Yahoo Japan title, name: seo_title, widget: string}
+          - {label: Google/Yahoo Japan description, name: seo_description, widget: text}
+          - {label: Keywords, name: seo_keywords, widget: text, required: false}
+          - {label: Slideshow headline, name: hero_title, widget: string}
+          - {label: Line under the headline, name: hero_lead, widget: string}
+          - {label: Hidden summary for search engines, name: hero_sr, widget: text}
+          - {label: Clients intro, name: clients_intro, widget: string}
+          - {label: Services intro, name: services_intro, widget: string}
+          - {label: Game services intro, name: game_intro, widget: string}
+          - {label: Animation services intro, name: anim_intro, widget: string}
+          - {label: Works intro, name: work_intro, widget: text}
+          - {label: Story heading 1, name: story_heading_1, widget: string}
+          - {label: Story text 1, name: story_text_1, widget: text}
+          - {label: Story heading 2, name: story_heading_2, widget: string}
+          - {label: Story text 2 (blank line between paragraphs), name: story_text_2, widget: text}
+          - {label: Testimonial, name: testimonial_quote, widget: text}
+          - {label: Testimonial by, name: testimonial_by, widget: string}
+          - {label: Rebate heading, name: rebate_title, widget: string}
+          - {label: Rebate text, name: rebate_text, widget: text}
+          - {label: Contact form intro, name: contact_intro, widget: string}
+
+      - name: jobs
+        label: Join us page (open positions, English)
+        file: content/jobs.json
+        format: json
+        fields:
+          - {label: Page heading, name: heading, widget: string}
+          - {label: Introduction (new line = line break), name: intro, widget: text}
+          - {label: Heading above the positions, name: positions_heading, widget: string}
+          - label: Positions (add, delete or reorder)
+            name: positions
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - {label: Job title, name: title, widget: string}
+              - {label: Description, name: text, widget: text}
+              - {label: Button text, name: button, widget: string, required: false}
+              - {label: Button link (application form), name: link, widget: string, required: false}
+              - {label: Grey button style (for notices such as no interns), name: secondary, widget: boolean, default: false, required: false}
+
+      - name: seo
+        label: Google titles and descriptions (SEO)
+        file: content/seo.json
+        format: json
+        fields:
+          - label: Pages
+            name: pages
+            widget: list
+            summary: "{{fields.page}}"
+            fields:
+              - {label: Page, name: page, widget: string, hint: "Do not change this name"}
+              - {label: Address, name: path, widget: string, hint: "Do not change - changing it breaks Google ranking"}
+              - {label: Title in Google, name: title, widget: string}
+              - {label: Description in Google, name: description, widget: text}
+              - {label: Keywords, name: keywords, widget: text, required: false}
+
+      - name: settings
+        label: Contact form settings
+        file: content/settings.json
+        format: json
+        fields:
+          - {label: Public email shown on the website, name: public_email, widget: string, required: false}
+          - {label: Public phone / WhatsApp shown on the website, name: phone, widget: string, required: false}
+          - {label: State or city shown on the website (e.g. Selangor), name: region, widget: string, required: false}
+          - {label: Street address shown on the English Contact page and footer (optional), name: address, widget: string, required: false}
+          - {label: Business hours shown on the English Contact page (optional, e.g. Mon-Fri 9am-6pm MYT), name: hours, widget: string, required: false}
+          - {label: Email that receives form messages (fallback when no form service), name: contact_email, widget: string, required: false}
+          - {label: Baidu site verification code (from ziyuan.baidu.com), name: baidu_verification, widget: string, required: false}
+          - {label: Naver site verification code (from searchadvisor.naver.com, used on Korean pages), name: naver_verification, widget: string, required: false}
+          - {label: Sogou site verification code, name: sogou_verification, widget: string, required: false}
+          - {label: 360 Search site verification code, name: so360_verification, widget: string, required: false}
+          - {label: Shenma site verification code, name: shenma_verification, widget: string, required: false}
+          - {label: Form service web address (for example from Formspree), name: form_endpoint, widget: string, required: false}
