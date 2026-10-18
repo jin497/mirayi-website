@@ -1,0 +1,7 @@
+# Old Wix URLs that no longer have their own page -> nearest new page (permanent 301)
+/jobs /join-with-us 301
+/join-with-us-1 /join-with-us 301
+/search /blog 301
+/profile/* /blog 301
+/blog/categories/* /blog 301
+/blog-categories/* /blog 301
