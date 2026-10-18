@@ -1,16 +1,23 @@
 ---
-title: "Creative Industry Awake"
-seo_title: "Creative Industry Awake"
-author: "Jin Chong Ng"
-published: "2025-08-07T03:01:31.873Z"
-modified: "2025-08-13T06:10:42.393Z"
-read: "1 min read"
-image: "https://static.wixstatic.com/media/c08280_d0b53444d92e4abca9e6c8f33c5458d0~mv2.jpg"
+title: Creative Industry Awake !
+seo_title: Creative Industry Awake
+author: Jin Chong Ng
+published: 2025-08-07T03:01:31.873Z
+modified: 2025-08-13T06:10:42.393Z
+image: https://static.wixstatic.com/media/c08280_d0b53444d92e4abca9e6c8f33c5458d0~mv2.jpg
 image_w: 3508
 image_h: 1793
-meta_desc: "Malaysia's 13th Malaysia Plan highlights animation as a key focus, Korea is investing USD 1 billion, and local IPs like Nezha are winning at the box office. The next wave of animation is rising in Asia."
-og_desc: "There’s a wave of positive momentum building in the creative industry. Malaysia just revealed the 13th Malaysia Plan (2026–2030), placing strong emphasis on growing the creative economy—with “animation” highlighted as a key focus. Korea is investing USD 1 billion over the next 5 years to boost its creative sector."
-excerpt: "There’s a wave of positive momentum building in the creative industry 🌊✨ Malaysia just revealed the 13th Malaysia Plan (2026–2030),..."
+meta_desc: Malaysia's 13th Malaysia Plan highlights animation as a key focus,
+  Korea is investing USD 1 billion, and local IPs like Nezha are winning at the
+  box office. The next wave of animation is rising in Asia.
+og_desc: There’s a wave of positive momentum building in the creative industry.
+  Malaysia just revealed the 13th Malaysia Plan (2026–2030), placing strong
+  emphasis on growing the creative economy—with “animation” highlighted as a key
+  focus. Korea is investing USD 1 billion over the next 5 years to boost its
+  creative sector.
+excerpt: There’s a wave of positive momentum building in the creative industry
+  🌊✨ Malaysia just revealed the 13th Malaysia Plan (2026–2030),...
+read: 1 min read
 ---
 
 There’s a wave of positive momentum building in the creative industry 🌊✨
