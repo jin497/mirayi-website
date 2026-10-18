@@ -51,6 +51,17 @@ def safe(i):
     return i.replace("~", "-")
 
 
+def uploaded(path):
+    """An image uploaded in /admin ('/assets/img/x.jpg'): the build shrinks it to x.webp and moves the original
+    away, so point to the .webp when that is what is left."""
+    if path.startswith("/assets/img/"):
+        f = ROOT / path.lstrip("/")
+        w = f.with_suffix(".webp")
+        if not f.is_file() and w.is_file():
+            return "/assets/img/" + w.name
+    return path
+
+
 def local_file(i):
     """The downloaded copy of a Wix image: the optimised .webp if there is one, else the original."""
     base = IMG_DIR / safe(i)
@@ -128,7 +139,7 @@ def wix(i, w, h):
     wixstatic URL, or an uploaded '/assets/img/..' path."""
     mid = media_id(i)
     if mid is None:
-        return i if i.startswith("http") else loc(i)
+        return i if i.startswith("http") else loc(uploaded(i))
     USED_IDS.add(mid)
     if local_file(mid):
         return loc("/assets/img/" + local_file(mid).name)
@@ -141,7 +152,7 @@ def absu(i, w=None, h=None):
     """Absolute https URL of an image (for og:image and structured data)."""
     mid = media_id(i)
     if mid is None:
-        return i if i.startswith("http") else SITE + i
+        return i if i.startswith("http") else SITE + uploaded(i)
     USED_IDS.add(mid)
     if local_file(mid):
         return f"{SITE}/assets/img/{local_file(mid).name}"
@@ -1196,10 +1207,19 @@ def body_join():
         btn = (f'<a class="{cls}" href="{E(x["link"])}" target="_blank" rel="noopener">{E(x.get("button") or "Apply now")}</a>'
                if x.get("link") else "")
         jobs += f'<div class="job"><div><h3>{E(x["title"])}</h3><p>{text}</p></div>{btn}</div>\n'
+    jp_src, jp_w, jp_h = wix('c08280_203cb469198a45968df9a3e6efcddf06f000.jpg', 1916, 808), 1916, 808
+    if J.get("image"):  # picture chosen in /admin
+        jp_src = wix(J["image"], 1916, 808)
+        try:
+            from PIL import Image
+            with Image.open(ROOT / uploaded(J["image"]).lstrip("/")) as _im:
+                jp_w, jp_h = _im.size
+        except Exception:
+            pass
     return f"""
 {page_hero(E(J["heading"]), intro)}
 <section class="block"><div class="wrap">
-<img class="photo" src="{wix('c08280_203cb469198a45968df9a3e6efcddf06f000.jpg', 1916, 808)}" alt="Join the Mirayi team" width="1916" height="808" style="aspect-ratio:1916/808;margin-bottom:56px">
+<img class="photo" src="{jp_src}" alt="{E(J.get("image_alt") or "Join the Mirayi team")}" width="{jp_w}" height="{jp_h}" style="aspect-ratio:{jp_w}/{jp_h};margin-bottom:56px">
 <div class="sec-head"><h2>{E(J.get("positions_heading") or "Open positions")}</h2></div>
 {jobs}</div></section>
 """
