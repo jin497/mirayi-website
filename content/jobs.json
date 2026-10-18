@@ -1,10 +1,13 @@
 {
- "heading": "Let’s turn imagination into animation!",
- "intro": "We are zealous about our creative and dynamic force, where success is relentless.\nWe are passionate about creating and sharing engaging stories through animation.\nYou do too? Join us!",
- "positions_heading": "Open positions",
- "positions": [
-  {"title": "Senior 3D Modeler (Game Assets)", "text": "Looking for someone who has a passion for art, an interest in environment art, demonstrates the ability to model and texture 3D props, environments, and characters, and a well-organized person. To assist supervisors to guide/support juniors as well.", "button": "Apply now", "link": "https://forms.gle/MdBfcFuxngb6ZG9f6"},
-  {"title": "Senior 3D Animator (Cinematic)", "text": "Solid understanding of character animation, and Create lip-sync, facial, and body character animation as well as prop animation, Strong IK/FK animation skills. The animator will work closely together with the other animators", "button": "Apply now", "link": "https://forms.gle/MdBfcFuxngb6ZG9f6"},
-  {"title": "We are not looking for any interns at the moment", "text": "For internship application, please fill in the following form. Further questions regarding recruitment, please email to hr@mirayi.my.", "button": "Apply", "link": "https://forms.gle/MdBfcFuxngb6ZG9f6", "secondary": true}
- ]
+  "heading": "Let’s turn imagination into animation!",
+  "intro": "We are zealous about our creative and dynamic force, where success is relentless.\nWe are passionate about creating and sharing engaging stories through animation.\nYou do too? Join us!",
+  "positions_heading": "Open positions",
+  "positions": [
+    {
+      "title": "Senior 3D Animator (TV Series)",
+      "text": "Solid understanding of character animation, and Create lip-sync, facial, and body character animation as well as prop animation, Strong IK/FK animation skills. The animator will work closely together with the other animators",
+      "button": "Apply now",
+      "link": "https://forms.gle/MdBfcFuxngb6ZG9f6"
+    }
+  ]
 }
