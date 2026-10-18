@@ -444,7 +444,7 @@ def footer_tr():
 <div><h4>{t['foot_h'][1]}</h4>{pr}</div>
 <div><h4>{t['foot_h'][2]}</h4>{soc}</div>
 </div></div>
-<div class="foot-bottom"><span>&copy; 2019 MIRAYI SDN BHD.</span><a href="{u('')}">{t['foot_en']}</a></div>
+<div class="foot-bottom"><span>&copy; {YEAR} MIRAYI SDN BHD.</span><a href="{u('')}">{t['foot_en']}</a></div>
 </div></footer>"""
 
 
@@ -461,7 +461,7 @@ def footer():
 <div><h4>Production</h4><a href="{u('seriesandfilms')}">Series &amp; feature</a><a href="{u('gameproduction')}">Game services</a><a href="{u('tvcommercials')}">TV commercial</a><a href="{u('visualdevelopment')}">Visual development</a></div>
 <div><h4>Follow</h4>{soc}</div>
 </div></div>
-<div class="foot-bottom"><span>&copy; 2019 MIRAYI SDN BHD.</span><span><a href="{u('contact')}">Contact</a> &middot; <a href="{u('blog')}">Blog</a> &middot; <a href="{u('privacy-policy')}">Privacy</a> &middot; <a href="{u('terms-of-use')}">Terms</a></span></div>
+<div class="foot-bottom"><span>&copy; {YEAR} MIRAYI SDN BHD.</span><span><a href="{u('contact')}">Contact</a> &middot; <a href="{u('blog')}">Blog</a> &middot; <a href="{u('privacy-policy')}">Privacy</a> &middot; <a href="{u('terms-of-use')}">Terms</a></span></div>
 </div></footer>"""
 
 
@@ -677,6 +677,8 @@ def contact_cta(text="For business or collaboration proposals, contact us."):
 HOME = load_json("home.json")
 HOME_L = {l: load_json(l + "/home.json") for l in LANGS if (ROOT / "content" / l / "home.json").exists()}
 SETTINGS = load_json("settings.json")
+import datetime as _dt
+YEAR = _dt.date.today().year  # copyright year follows the build date
 
 
 def tel_digits(t):
