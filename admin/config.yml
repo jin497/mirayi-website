@@ -357,6 +357,8 @@ collections:
           - {label: Page heading, name: heading, widget: string}
           - {label: Introduction (new line = line break), name: intro, widget: text}
           - {label: Heading above the positions, name: positions_heading, widget: string}
+          - {label: Big picture on the Join us page (leave empty to keep the current one; wide, about 1600 x 700), name: image, widget: image, required: false}
+          - {label: Picture description for search engines and screen readers, name: image_alt, widget: string, required: false}
           - label: Positions (add, delete or reorder)
             name: positions
             widget: list
