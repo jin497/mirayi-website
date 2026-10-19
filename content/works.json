@@ -13,6 +13,30 @@
       "video": "https://youtu.be/2clcjBPoKOk"
     },
     {
+      "img": "https://static.wixstatic.com/media/c08280_8b2028f9db0b4ac8881fdb8728e1c37e~mv2.jpg",
+      "h": 444,
+      "note": "",
+      "type_zh": "动画制作服务",
+      "kind": "service",
+      "cat": "series",
+      "w": 250,
+      "title": "Power Rocker",
+      "type": "Animation services",
+      "video": "https://www.youtube.com/watch?v=A8S1Dc-h__Q&t=16s"
+    },
+    {
+      "img": "https://static.wixstatic.com/media/c08280_0fef89864b974bd68a998cbaba8ce177~mv2.jpg",
+      "h": 166,
+      "note": "",
+      "type_zh": "制作服务",
+      "kind": "service",
+      "cat": "series",
+      "w": 250,
+      "title": "Nefertine on the Nile",
+      "type": "Production services",
+      "video": "https://www.youtube.com/watch?v=0PvLfpLIsvo"
+    },
+    {
       "img": "https://static.wixstatic.com/media/c08280_d0b53444d92e4abca9e6c8f33c5458d0~mv2.jpg",
       "h": 127,
       "note": "",
@@ -62,6 +86,18 @@
       "video": "https://youtu.be/rMzSo82ggTg"
     },
     {
+      "img": "https://static.wixstatic.com/media/7c4f43_125ce7e463294bd9abbc69243d3d2176~mv2.jpg",
+      "h": 353,
+      "note": "",
+      "type_zh": "动作喜剧动画系列 · 52集 × 11分钟 · 2019至2020年制作",
+      "kind": "ip",
+      "cat": "series",
+      "w": 250,
+      "title": "MegaBear",
+      "type": "Action comedy cartoon series · 52 episodes × 11 min · In production 2019 to 2020",
+      "video": "https://youtu.be/JK3s7masNl0"
+    },
+    {
       "img": "https://static.wixstatic.com/media/0e22db_eab78aab19424713a34e9f6f5229e0c7~mv2_d_1400_1980_s_2.jpg",
       "h": 353,
       "note": "",
@@ -96,18 +132,6 @@
       "title": "Firerobo",
       "type": "Action comedy cartoon series · Animation services",
       "video": "https://youtu.be/ZaoZ9XGnv58"
-    },
-    {
-      "img": "https://static.wixstatic.com/media/7c4f43_125ce7e463294bd9abbc69243d3d2176~mv2.jpg",
-      "h": 353,
-      "note": "",
-      "type_zh": "动作喜剧动画系列 · 52集 × 11分钟 · 2019至2020年制作",
-      "kind": "ip",
-      "cat": "series",
-      "w": 250,
-      "title": "MegaBear",
-      "type": "Action comedy cartoon series · 52 episodes × 11 min · In production 2019 to 2020",
-      "video": "https://youtu.be/JK3s7masNl0"
     },
     {
       "img": "https://static.wixstatic.com/media/7c4f43_04820ca64be74b349c5591b97f614130~mv2.jpg",
@@ -169,30 +193,6 @@
       "type": "Pre-school cartoon series · 7 min × 78 episodes",
       "video": "https://youtu.be/btx8Iakxhwg?si=qU_5udZZX1NUUVnR",
       "note_zh": "寻找联合制作方"
-    },
-    {
-      "img": "https://static.wixstatic.com/media/c08280_0fef89864b974bd68a998cbaba8ce177~mv2.jpg",
-      "h": 166,
-      "note": "",
-      "type_zh": "制作服务",
-      "kind": "service",
-      "cat": "series",
-      "w": 250,
-      "title": "Nefertine on the Nile",
-      "type": "Production services",
-      "video": "https://www.youtube.com/watch?v=0PvLfpLIsvo"
-    },
-    {
-      "img": "https://static.wixstatic.com/media/c08280_8b2028f9db0b4ac8881fdb8728e1c37e~mv2.jpg",
-      "h": 444,
-      "note": "",
-      "type_zh": "动画制作服务",
-      "kind": "service",
-      "cat": "series",
-      "w": 250,
-      "title": "Power Rocker",
-      "type": "Animation services",
-      "video": "https://www.youtube.com/watch?v=A8S1Dc-h__Q&t=16s"
     },
     {
       "img": "https://static.wixstatic.com/media/c08280_c19c86d7b289429a9450b349502838be~mv2.jpg",
@@ -386,5 +386,6 @@
       "type": "TV commercial",
       "video": "https://youtu.be/aHbHd9zyG0U?si=JtEvlaCRVbZLxmNA"
     }
-  ]
+  ],
+  "thumb_shape": "natural"
 }
