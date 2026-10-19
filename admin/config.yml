@@ -202,7 +202,16 @@ collections:
         file: content/works.json
         format: json
         fields:
-          - label: Works
+          - label: Thumbnail shape for all works
+            name: thumb_shape
+            widget: select
+            default: natural
+            options:
+              - {label: "As uploaded (each picture keeps its own shape)", value: natural}
+              - {label: "Poster, tall (2:3), neat rows", value: poster}
+              - {label: "Landscape (16:9), neat rows", value: landscape}
+              - {label: "Square (1:1), neat rows", value: square}
+          - label: "Works (drag the handle on the left of a row to move it up or down; the first one is shown first)"
             name: works
             widget: list
             summary: "{{fields.title}} · {{fields.kind}}"
@@ -221,8 +230,32 @@ collections:
                   - {label: Series, value: series}
                   - {label: Film, value: film}
                   - {label: Commercial, value: commercial}
+              - {label: Pin to the top (shown before all others, in list order), name: featured, widget: boolean, default: false, required: false}
+              - {label: Hide from the website (keeps the entry, not shown), name: hidden, widget: boolean, default: false, required: false}
               - {label: Caption under the title, name: type, widget: string, required: false}
-              - {label: Picture, name: img, widget: image}
+              - {label: Picture (thumbnail), name: img, widget: image}
+              - label: Thumbnail shape for this work only (optional)
+                name: shape
+                widget: select
+                default: default
+                required: false
+                options:
+                  - {label: "Same as all other works (recommended)", value: default}
+                  - {label: "Poster, tall (2:3)", value: poster}
+                  - {label: "Landscape (16:9)", value: landscape}
+                  - {label: "Square (1:1)", value: square}
+                  - {label: "As uploaded", value: natural}
+              - label: Which part of the picture to keep when it is cropped
+                name: focus
+                widget: select
+                default: center
+                required: false
+                options:
+                  - {label: Centre, value: center}
+                  - {label: Top (faces and titles), value: top}
+                  - {label: Bottom, value: bottom}
+                  - {label: Left, value: left}
+                  - {label: Right, value: right}
               - {label: YouTube link (optional, makes the picture clickable), name: video, widget: string, required: false}
               - {label: Extra tag on the picture (optional, e.g. Looking for co-producer), name: note, widget: string, required: false}
               - {label: Picture width (leave empty for a new upload), name: w, widget: number, required: false}
