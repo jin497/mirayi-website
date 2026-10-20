@@ -32,7 +32,7 @@
   function ratioOf(w) { var s = shapeOf(w); return s === 'natural' ? w.w / w.h : SHAPE[s]; }
 
   // base address of the site (works on the live site and when opening the _preview folder from disk)
-  var sc = document.querySelector('script[src$="works.js"]');
+  var sc = document.querySelector('script[src*="works.js"]');
   var base = sc && sc.src ? sc.src.replace(/assets\/works\.js.*$/, '') : '/';
 
   function imgUrl(id, w, h) {
@@ -94,6 +94,7 @@
       (facts ? '<dl class="wd-facts">' + facts + '</dl>' : '') +
       '<div class="wd-actions">' +
       vids.map(function (v, n) { return '<a class="btn' + (n ? ' btn-ghost' : '') + '" href="' + esc(v.u) + '" target="_blank" rel="noopener noreferrer">' + esc(v.l) + '</a>'; }).join('') +
+      (w.fb ? '<a class="btn btn-ghost" href="' + esc(w.fb) + '" target="_blank" rel="noopener noreferrer">Facebook</a>' : '') +
       (w.pg ? '<a class="btn btn-ghost" href="' + base + 'work/' + esc(w.pg) + '">' + esc(L.full) + '</a>' : '') +
       '<a class="wd-ask" href="' + homeBase + '#contact">' + esc(L.ask) + '</a></div></div></div>';
     dlg.innerHTML = h;

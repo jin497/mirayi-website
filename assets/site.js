@@ -27,7 +27,7 @@
     });
     var restart = function () {
       clearInterval(timer);
-      if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) timer = setInterval(function () { show(cur + 1); }, 5000);
+      if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) timer = setInterval(function () { show(cur + 1); }, Math.max(1, parseFloat(hs.dataset.seconds) || 5) * 1000);
     };
     hs.querySelector('.prev').addEventListener('click', function () { show(cur - 1); restart(); });
     hs.querySelector('.next').addEventListener('click', function () { show(cur + 1); restart(); });
@@ -37,6 +37,94 @@
     if (document.readyState === 'complete') loadRest(); else window.addEventListener('load', loadRest);
     show(0); restart();
   }
+
+
+  // Social cards: load Facebook / LinkedIn only after a click (keeps the page fast and private)
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.embed-load');
+    if (!b) return;
+    var f = document.createElement('iframe');
+    f.src = b.dataset.src;
+    f.title = b.dataset.title || '';
+    f.loading = 'lazy';
+    f.setAttribute('allow', 'encrypted-media');
+    f.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+    f.style.cssText = 'width:100%;height:' + (b.dataset.h || 500) + 'px;border:0;display:block;background:#fff';
+    var box = b.parentNode;
+    box.innerHTML = '';
+    box.style.minHeight = '0';
+    box.appendChild(f);
+  });
+
+  // Optional: load a social card as soon as it scrolls into view (only when switched on in /admin)
+  var autoCards = document.querySelectorAll('.embed-card[data-auto]');
+  if (autoCards.length && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        var b = en.target.querySelector('.embed-load');
+        if (b) b.click();
+      });
+    }, { rootMargin: '200px' });
+    autoCards.forEach(function (c) { io.observe(c); });
+  }
+
+  // "What people say": numbered buttons, swipe, arrow keys and automatic next slide
+  document.querySelectorAll('.tcar[data-seconds]').forEach(function (car) {
+    var slides = car.querySelectorAll('.tc-slide');
+    if (slides.length < 2) return;
+    car.classList.add('js');
+    var cur = 0, timer = null, paused = false;
+    var secs = Math.max(2, parseFloat(car.dataset.seconds) || 8);
+    var nav = document.createElement('div');
+    nav.className = 'tc-nav';
+    nav.setAttribute('role', 'group');
+    var prev = document.createElement('button'), next = document.createElement('button');
+    prev.type = next.type = 'button';
+    prev.className = 'tc-arrow'; next.className = 'tc-arrow';
+    prev.innerHTML = '&#8249;'; next.innerHTML = '&#8250;';
+    prev.setAttribute('aria-label', car.dataset.prev || 'Previous');
+    next.setAttribute('aria-label', car.dataset.next || 'Next');
+    nav.appendChild(prev);
+    var nums = [];
+    slides.forEach(function (_, i) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'tc-num'; b.textContent = String(i + 1);
+      b.setAttribute('aria-label', (car.dataset.go || 'Show comment') + ' ' + (i + 1));
+      b.addEventListener('click', function () { go(i); restart(); });
+      nums.push(b); nav.appendChild(b);
+    });
+    nav.appendChild(next);
+    car.appendChild(nav);
+    function go(n) {
+      cur = (n + slides.length) % slides.length;
+      slides.forEach(function (s, i) { s.classList.toggle('on', i === cur); s.setAttribute('aria-hidden', i === cur ? 'false' : 'true'); });
+      nums.forEach(function (b, i) { b.setAttribute('aria-current', i === cur ? 'true' : 'false'); });
+    }
+    function restart() {
+      clearInterval(timer);
+      if (paused || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+      timer = setInterval(function () { go(cur + 1); }, secs * 1000);
+    }
+    prev.addEventListener('click', function () { go(cur - 1); restart(); });
+    next.addEventListener('click', function () { go(cur + 1); restart(); });
+    car.addEventListener('mouseenter', function () { paused = true; clearInterval(timer); });
+    car.addEventListener('mouseleave', function () { paused = false; restart(); });
+    car.addEventListener('focusin', function () { paused = true; clearInterval(timer); });
+    car.addEventListener('focusout', function () { paused = false; restart(); });
+    car.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { go(cur - 1); restart(); } else if (e.key === 'ArrowRight') { go(cur + 1); restart(); }
+    });
+    var x0 = null;
+    car.addEventListener('pointerdown', function (e) { x0 = e.clientX; });
+    car.addEventListener('pointerup', function (e) {
+      if (x0 === null) return;
+      var dx = e.clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) { go(cur + (dx < 0 ? 1 : -1)); restart(); }
+    });
+    go(0); restart();
+  });
 
 
   // Language: remember a manual choice, and on a first visit send people whose browser language is
