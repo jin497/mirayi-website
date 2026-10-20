@@ -384,8 +384,12 @@ def alt_links(p):
 
 
 def a(name):
+    """Address of a file in assets/, with a short fingerprint so browsers fetch a changed file straight away."""
+    import hashlib
+    f = ROOT / "assets" / name
+    v = "?v=" + hashlib.md5(f.read_bytes()).hexdigest()[:8] if f.is_file() else ""
     # preview pages live in _preview/, one level below the real assets folder
-    return ("../" * (DEPTH + 1) + "assets/" + name) if PREVIEW else "/assets/" + name
+    return (("../" * (DEPTH + 1) + "assets/" + name) if PREVIEW else "/assets/" + name) + v
 
 
 SOCIAL = [
@@ -668,9 +672,9 @@ def fb_src(url, h=520):
             f"&tabs=timeline&width=500&height={h}&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false")
 
 
-def embed_card(title, src, h, load, note, open_url, open_label, cls=""):
+def embed_card(title, src, h, load, note, open_url, open_label, cls="", auto=False):
     """A social card that only loads the third-party content after a click (faster page, no tracking before consent)."""
-    return (f'<div class="embed-card {cls}"><h3>{E(title)}</h3><div class="embed-box" style="min-height:{min(h, 200)}px">'
+    return (f'<div class="embed-card {cls}"{" data-auto=\"1\"" if auto else ""}><h3>{E(title)}</h3><div class="embed-box" style="min-height:{min(h, 200)}px">'
             f'<button class="btn btn-ghost embed-load" type="button" data-src="{E(src)}" data-h="{h}" data-title="{E(title)}">{E(load)}</button>'
             f'<p class="embed-note">{E(note)}</p></div>'
             f'<a class="embed-open" href="{E(open_url)}" target="_blank" rel="noopener">{E(open_label)}</a></div>')
@@ -685,7 +689,7 @@ def social_social():
     li = (HOME.get("linkedin_url") or dict(SOCIAL).get("LinkedIn") or "").strip()
     out = ""
     if fb.startswith("http"):
-        out += embed_card(t["fb"], fb_src(fb), 520, t["fb_load"], t["fb_note"], fb, t["fb_open"])
+        out += embed_card(t["fb"], fb_src(fb), 520, t["fb_load"], t["fb_note"], fb, t["fb_open"], auto=bool(HOME.get("social_autoload")))
     if li.startswith("http"):
         posts = ""
         for x in (HOME.get("linkedin_posts") or [])[:3]:
@@ -718,7 +722,7 @@ def ip_social():
 
 def testimonials_html(items, seconds):
     """'What people say': one quote, or a carousel (numbered buttons, swipe, auto-advance) when there are several."""
-    items = [(q.strip(), (b or "").strip()) for q, b in items if (q or "").strip()]
+    items = [(q.strip().strip('"\u201c\u201d\u300c\u300d').strip(), (b or "").strip()) for q, b in items if (q or "").strip()]
     if not items:
         return ""
     t = ST()
@@ -737,6 +741,8 @@ def newsletter_block():
     """Subscribe box. Shown only when a form address or a hosted sign-up page is set in /admin (Contact form settings)."""
     action = (SETTINGS.get("newsletter_action") or "").strip()
     hosted = (SETTINGS.get("newsletter_url") or "").strip()
+    if "sibforms.com/serve/" in action or "list-manage.com" in action and "/subscribe" not in action:
+        hosted, action = hosted or action, ""   # a hosted sign-up PAGE pasted in the form box: use it as the Subscribe button
     if not (action.startswith("http") or hosted.startswith("http")):
         return ""
     t = ST()
