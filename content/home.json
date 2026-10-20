@@ -126,6 +126,28 @@
   "show_social": true,
   "story_image": "https://static.wixstatic.com/media/7c4f43_af7e16dca72b45cd80b0f3bbafee04fd~mv2.jpg",
   "hero_title": "Game & Animation Studio",
+  "testimonials": [
+    {
+      "quote": "\"I am extremely pleased with the CG animation done by Mirayi. I knew I made the right decision in trusting them for our animation production from commencement.\"",
+      "by": "VOOZ CLUB Kim Yu Kyung, CEO"
+    },
+    {
+      "quote": "\"Mirayi completed and delivered the best 3D animation with integrity and zeal. Well done!\"",
+      "by": "AURORA WORLD Chey I IL Woong, Director"
+    },
+    {
+      "by": "SUNDAYTOZ Bae Hae Jung, Manager",
+      "quote": "\"Mirayi did an incredible job. Wholeheartedly, I recommend them to you - a team oozing with talented individuals of cutting-edge expertise, dedication and passion for animation.\""
+    },
+    {
+      "quote": "\"The services rendered are beyond what I anticipated. I give two thumbs up for this outstanding animation agency.\"",
+      "by": "GEEEK SOFT Co. LTD Kim Tae Hyun, CEO"
+    },
+    {
+      "quote": "\"Due to open communication and innovative development, the final animation was fantastic and astounding. I look forward to working with Mirayi again.\"",
+      "by": "STUDIO BUTTON Kim Horak, Director"
+    }
+  ],
   "testimonial_by": "Chey I IL Woong, Director — Aurora World",
   "rebate_title": "30% cash rebate for animation produced in Malaysia",
   "testimonial_quote": "Mirayi completed and delivered the best 3D animation with integrity and zeal. Well done!"
