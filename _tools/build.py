@@ -370,7 +370,7 @@ def lang_path(lang, slug):
 def alt_links(p):
     """hreflang alternates between the English page and each translated counterpart that exists."""
     path = p["path"]
-    if path == "404" or path.startswith("post/"):
+    if path == "404" or path.startswith("post/") or path.startswith("work/"):
         return []
     _, slug = split_lang(path)
     out = [("en", page_url(slug))]
@@ -505,6 +505,8 @@ def breadcrumb_ld(p):
     trail = [("Home", SITE)]
     if path.startswith("post/"):
         trail += [("Blog", SITE + "/blog"), (p["title"], SITE + "/" + path)]
+    elif path.startswith("work/"):
+        trail += [("Production", SITE + "/production"), (p.get("crumb") or p["title"], SITE + "/" + path)]
     else:
         if path in ("seriesandfilms", "gameproduction", "tvcommercials", "visualdevelopment"):
             trail.append(("Production", SITE + "/production"))
@@ -633,6 +635,39 @@ def ordered_works():
     return [w for w in ws if w.get("featured")] + [w for w in ws if not w.get("featured")]
 
 
+def slug_of(w):
+    raw = (w.get("slug") or w["title"]).lower().replace("&", " and ")
+    return re.sub(r"[^a-z0-9]+", "-", raw).strip("-") or "project"
+
+
+def case_content(w):
+    return any((w.get(k) or "").strip() if isinstance(w.get(k), str) else w.get(k) for k in ("summary", "role", "details", "services"))
+
+
+def case_works():
+    """Works that have their own case-study page: ticked in /admin and with something written to show."""
+    seen, out = set(), []
+    for w in ordered_works():
+        if w.get("page") and case_content(w) and slug_of(w) not in seen:
+            seen.add(slug_of(w))
+            out.append(w)
+    return out
+
+
+CASES = case_works()
+
+
+def videos_of(w, cn=False):
+    """Up to 3 (label, link) pairs. Chinese pages show video_cn in place of the first link when it is filled in."""
+    out = []
+    for n, (ukey, lkey, dflt) in enumerate((("video", "video_label", "Watch video"), ("video2", "video2_label", "Watch video 2"),
+                                          ("video3", "video3_label", "Watch video 3"))):
+        url = (w.get("video_cn") if (cn and n == 0 and w.get("video_cn")) else w.get(ukey)) or ""
+        if url.strip():
+            out.append(((w.get(lkey) or "").strip() or dflt, url.strip()))
+    return out
+
+
 def works_list(kinds, cats):
     """Plain-text list of the works (for visitors, search engines and AI crawlers that do not run JavaScript)."""
     ks = [x for x in kinds.split(",") if x]
@@ -649,7 +684,8 @@ def works_list(kinds, cats):
         kind = (T()["kind_ip"] if tr else "Mirayi original IP") if w.get("kind") == "ip" else (T()["kind_svc"] if tr else "Animation services")
         typ = (w.get("type_" + LANG) if tr else "") or w.get("type") or kind
         note = (w.get("note_" + LANG) if tr else "") or w.get("note")
-        items.append(f"<li>{name} &mdash; {E(typ)}{' (' + E(note) + ')' if note else ''}</li>")
+        desc = (w.get("summary_" + LANG) if tr else "") or w.get("summary") or ""
+        items.append(f"<li>{name} &mdash; {E(typ)}{' (' + E(note) + ')' if note else ''}{'. ' + E(desc) if desc else ''}</li>")
     return "<ul>" + "".join(items) + "</ul>" if items else ""
 
 
@@ -1204,6 +1240,72 @@ def make_post_body(post):
     return body
 
 
+def make_case_body(w):
+    def body():
+        i = w["img"]
+        ww, hh = dims_of(i, w.get("w"), w.get("h"))
+        facts = []
+        if w.get("type"):
+            facts.append(("Format", w["type"]))
+        if w.get("year"):
+            facts.append(("Year", str(w["year"])))
+        if w.get("client"):
+            facts.append(("Client", w["client"]))
+        facts.append(("Type", "Mirayi original IP" if w.get("kind") == "ip" else "Animation services by Mirayi"))
+        fhtml = "".join(f"<div><dt>{E(k)}</dt><dd>{E(v)}</dd></div>" for k, v in facts)
+        parts = []
+        if (w.get("summary") or "").strip():
+            parts.append(f'<p class="case-lead">{E(w["summary"].strip())}</p>')
+        if (w.get("role") or "").strip():
+            parts.append(f'<h2>What we did</h2><p>{"<br>".join(E(x) for x in w["role"].strip().split(chr(10)))}</p>')
+        svc = [x for x in (w.get("services") or []) if x]
+        if svc:
+            parts.append('<h2>Services</h2><ul class="chips">' + "".join(f"<li>{E(x)}</li>" for x in svc) + "</ul>")
+        if (w.get("details") or "").strip():
+            parts.append(md_to_html(w["details"]))
+        vids = videos_of(w)
+        if vids:
+            parts.append('<h2>Watch</h2><p class="case-videos">' + "".join(
+                f'<a class="btn{" btn-ghost" if n else ""}" href="{E(uu)}" target="_blank" rel="noopener noreferrer">{E(l)}</a>'
+                for n, (l, uu) in enumerate(vids)) + "</p>")
+        gal = "".join(
+            f'<img src="{wix(g["image"], 900, 600)}" alt="{E(g.get("alt") or w["title"])}" loading="lazy">'
+            for g in (w.get("gallery") or []) if g.get("image"))
+        if gal:
+            parts.append(f'<h2>Gallery</h2><div class="case-gallery">{gal}</div>')
+        others = "".join(f'<a href="{u("work/" + slug_of(o))}">{E(o["title"])}</a>' for o in CASES if o is not w)
+        more = f'<aside class="recent"><h2>More projects</h2>{others}<a href="{u("production")}">All production</a></aside>' if others else ""
+        return f"""
+{page_hero(E(w["title"]), E(w.get("type") or ""), crumbs=[("Home", ""), ("Production", "production"), (w["title"], None)])}
+<section class="block"><div class="wrap case">
+<div class="case-side"><img class="photo" src="{wix(i, 900, round(900 * hh / ww))}" alt="{E(w["title"])} — {E(w.get("type") or "")}" width="{ww}" height="{hh}" style="aspect-ratio:{ww}/{hh}"><dl class="case-facts">{fhtml}</dl></div>
+<div class="prose case-main">{"".join(parts)}</div>
+</div>
+{more and f'<div class="wrap">{more}</div>'}</section>
+{contact_cta("Want something similar? Send us your brief.")}
+"""
+    return body
+
+
+def case_ld(w):
+    i = w["img"]
+    ww, hh = dims_of(i, w.get("w"), w.get("h"))
+    desc = (w.get("summary") or w.get("role") or w.get("type") or "").strip()
+    org = {"@type": "Organization", "name": "Mirayi Sdn Bhd", "url": SITE}
+    ld = {"@context": "https://schema.org", "@type": "CreativeWork", "name": w["title"], "description": desc,
+          "image": absu(i, ww, hh), "url": f"{SITE}/work/{slug_of(w)}",
+          ("creator" if w.get("kind") == "ip" else "contributor"): org}
+    if w.get("year"):
+        ld["dateCreated"] = str(w["year"])
+    if w.get("type"):
+        ld["genre"] = w["type"]
+    vids = videos_of(w)
+    if vids:
+        ld["subjectOf"] = [{"@type": "VideoObject", "name": f'{w["title"]} — {l}', "contentUrl": uu, "description": desc or w["title"],
+                            "thumbnailUrl": absu(i, ww, hh), "uploadDate": TODAY} for l, uu in vids]
+    return [ld]
+
+
 def body_blog():
     cards = "".join(
         f"""<a class="post-card" href="{u('post/' + p['slug'])}">
@@ -1384,6 +1486,17 @@ for _p in POSTS:
         jsonld=[article_ld(_p)]))
 
 
+for _w in CASES:
+    _i = _w["img"]
+    _ww, _hh = dims_of(_i, _w.get("w"), _w.get("h"))
+    _d = (_w.get("summary") or _w.get("role") or _w.get("type") or "").strip().replace("\n", " ")
+    PAGES.append(dict(
+        path="work/" + slug_of(_w), active="prod", body=make_case_body(_w), crumb=_w["title"],
+        title=f'{_w["title"]} | Animation by Mirayi',
+        desc=(_d[:157] + "…") if len(_d) > 158 else (_d or f'{_w["title"]}: {_w.get("type") or "an animation project"} by Mirayi.'),
+        keywords=KW_PROD, og_img=(_i, _ww, _hh), jsonld=case_ld(_w)))
+
+
 # ---------------------------------------------------------------- static files
 
 def llms_txt():
@@ -1405,6 +1518,9 @@ def llms_txt():
         if trp:
             lines += ["", UI[_l]["llms_h"], "", UI[_l]["llms_note"], ""]
             lines += [f"- [{p['crumb'] if p.get('crumb') else UI[_l]['crumb_home']}]({page_url(p['path'])}): {p['desc']}" for p in trp]
+    if CASES:
+        lines += ["", "## Project case studies", ""] + [
+            f"- [{w['title']}]({SITE}/work/{slug_of(w)}): {(w.get('summary') or w.get('role') or w.get('type') or '').strip()[:200]}" for w in CASES]
     lines += ["", "## Guides", ""] + [f"- [{g['h1']}]({SITE}/{g['slug']}): {g['desc']}" for g in GUIDES]
     lines += ["", "## Posts", ""] + [f"- [{p['h1']}]({SITE}/post/{p['slug']}): {p['meta_desc']}" for p in POSTS]
     lines += ["", "## Contact", "", f"- Business and collaboration enquiries: {SITE}/#contact"]
@@ -1484,12 +1600,29 @@ def write_works():
             ww, hh = 250, round(250 * hh / ww)
         item = {"t": w["title"], "kind": w.get("kind", "service"), "cat": w.get("cat", "series"),
                 "type": w.get("type", ""), "img": img, "w": ww, "h": hh}
+        if w.get("summary"):
+            item["d"] = w["summary"]
+        if w.get("role"):
+            item["r"] = w["role"]
+        if w.get("services"):
+            item["sv"] = [x for x in w["services"] if x]
+        if w.get("year"):
+            item["y"] = str(w["year"])
+        if w.get("client"):
+            item["c"] = w["client"]
+        if w in CASES:
+            item["pg"] = slug_of(w)
+        _v = [{"l": l, "u": uu} for l, uu in videos_of(w)]
+        if _v:
+            item["vs"] = _v
+        for _k, _dk in (("summary", "d"), ("role", "r")):
+            for _l, _suf in (("zh", "z"), ("ko", "k"), ("ja", "j")):
+                if w.get(f"{_k}_{_l}"):
+                    item[_dk + _suf] = w[f"{_k}_{_l}"]
         if w.get("shape") and w["shape"] != "default":
             item["s"] = w["shape"]
         if w.get("focus") and w["focus"] != "center":
             item["f"] = w["focus"]
-        if w.get("video"):
-            item["video"] = w["video"]
         if w.get("note"):
             item["note"] = w["note"]
         for src_k, dst_k in (("title_zh", "tz"), ("type_zh", "xz"), ("note_zh", "nz"), ("video_cn", "vz"),
