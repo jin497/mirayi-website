@@ -1,6 +1,17 @@
 {
   "works": [
     {
+      "shape": "default",
+      "img": "/assets/img/c8a30f1384d5ece0f57629160e7d3e6a.jpg",
+      "hidden": false,
+      "featured": false,
+      "kind": "service",
+      "cat": "series",
+      "focus": "center",
+      "title": "Tara Duncan Season 02",
+      "type": ""
+    },
+    {
       "img": "https://static.wixstatic.com/media/0cc356_fe9f282bcded49dba3587ce63af2c19d~mv2.jpg",
       "h": 370,
       "note": "",
@@ -47,6 +58,18 @@
       "title": "Red & Wolf",
       "type": "Slapstick comedy · 3 min × 52 episodes",
       "video": "https://www.youtube.com/watch?v=UgS5b6NVTlE"
+    },
+    {
+      "shape": "default",
+      "img": "/assets/img/mv5bzdgzyzviy2ytzgviyy00ytkxltg1mzqtztnknddlzjq4ogi3xkeyxkfqcgc-._v1_fmjpg_ux1000_.jpg",
+      "hidden": false,
+      "featured": false,
+      "kind": "service",
+      "cat": "series",
+      "focus": "center",
+      "title": "The Mirage House In The Clouds",
+      "type": "云中居三子",
+      "video": "https://www.youtube.com/watch?v=rxMu0F6jdoM"
     },
     {
       "img": "https://static.wixstatic.com/media/c08280_534e986109144c979bc32a8ee15c5a11~mv2.jpg",
@@ -120,6 +143,41 @@
       "title": "Arthur and The Minimoys",
       "type": "Animation services",
       "video": "https://youtu.be/rMzSo82ggTg"
+    },
+    {
+      "shape": "default",
+      "img": "/assets/img/capture.jpg",
+      "hidden": false,
+      "featured": false,
+      "kind": "service",
+      "cat": "series",
+      "focus": "center",
+      "title": "Quantum heroes dinoster",
+      "type": "Asset & Animation",
+      "video": "https://youtu.be/BPzDGaZSl-c?si=520l2zc0bVOdOrpU"
+    },
+    {
+      "shape": "default",
+      "img": "/assets/img/7f559ff5358aa26e998699e04043c9bd.jpg",
+      "hidden": false,
+      "featured": false,
+      "kind": "service",
+      "cat": "series",
+      "focus": "center",
+      "title": "画江湖之不良人 Season 08",
+      "type": "Animation production",
+      "video": "https://www.youtube.com/watch?v=Afc4qYSzao4"
+    },
+    {
+      "shape": "default",
+      "img": "/assets/img/metal-cardbot.jpg",
+      "hidden": false,
+      "featured": false,
+      "kind": "service",
+      "cat": "series",
+      "focus": "center",
+      "title": "Metal cardbot",
+      "video": "https://www.youtube.com/watch?v=LApR9PvRcNs"
     },
     {
       "img": "https://static.wixstatic.com/media/7c4f43_04820ca64be74b349c5591b97f614130~mv2.jpg",
@@ -277,6 +335,18 @@
       "title": "Blade of Hope",
       "type": "Animation",
       "video": "https://youtu.be/2iOqbUFT15E"
+    },
+    {
+      "shape": "default",
+      "img": "/assets/img/bimiboo.jpg",
+      "hidden": false,
+      "featured": false,
+      "kind": "service",
+      "cat": "series",
+      "focus": "center",
+      "title": "Bimi boo",
+      "type": "youtube series",
+      "video": "https://www.youtube.com/bimibookids"
     },
     {
       "img": "https://static.wixstatic.com/media/c08280_93e987d16e884989afd79fdb75e11a2a~mv2.jpg",
