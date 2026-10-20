@@ -10,15 +10,19 @@
   var lang = ((document.documentElement.lang || 'en').slice(0, 2)).toLowerCase();
   var LS = {
     zh: { all: '全部作品', ip: 'Mirayi 原创IP', service: '服务项目', watch: '观看', watchLabel: '观看', opens: '（打开视频链接）',
-          viewAll: function (n) { return '查看全部 ' + n + ' 个作品'; }, fewer: '收起作品', none: '暂无作品。', ipTag: 'Mirayi 原创IP' },
+          viewAll: function (n) { return '查看全部 ' + n + ' 个作品'; }, fewer: '收起作品', none: '暂无作品。', ipTag: 'Mirayi 原创IP',
+          view: '查看详情', close: '关闭', did: '我们的工作', svc: '服务内容', year: '年份', client: '客户', full: '阅读完整案例（英文）', ask: '洽谈类似项目', wv: '观看视频' },
     ko: { all: '전체 작품', ip: 'Mirayi IP', service: '제작 서비스', watch: '보기', watchLabel: '보기', opens: ' (영상 링크가 열립니다)',
-          viewAll: function (n) { return '작품 ' + n + '개 모두 보기'; }, fewer: '작품 접기', none: '표시할 작품이 없습니다.', ipTag: 'Mirayi 오리지널 IP' },
+          viewAll: function (n) { return '작품 ' + n + '개 모두 보기'; }, fewer: '작품 접기', none: '표시할 작품이 없습니다.', ipTag: 'Mirayi 오리지널 IP',
+          view: '자세히 보기', close: '닫기', did: '담당 업무', svc: '제공 서비스', year: '연도', client: '클라이언트', full: '전체 사례 보기 (영어)', ask: '비슷한 프로젝트 문의', wv: '영상 보기' },
     ja: { all: 'すべての作品', ip: 'Mirayi IP', service: '制作サービス', watch: '再生', watchLabel: '再生', opens: '（動画リンクが開きます）',
-          viewAll: function (n) { return '全' + n + '作品を表示'; }, fewer: '作品を折りたたむ', none: '表示する作品がありません。', ipTag: 'Mirayi オリジナルIP' }
+          viewAll: function (n) { return '全' + n + '作品を表示'; }, fewer: '作品を折りたたむ', none: '表示する作品がありません。', ipTag: 'Mirayi オリジナルIP',
+          view: '詳細を見る', close: '閉じる', did: '担当内容', svc: '提供サービス', year: '年', client: 'クライアント', full: '事例の全文を読む（英語）', ask: '同様のご相談', wv: '動画を見る' }
   };
   var L = LS[lang] || {
     all: 'All works', ip: 'Mirayi IP', service: 'Services work', watch: 'Watch', watchLabel: 'Watch', opens: ' (opens YouTube)',
-    viewAll: function (n) { return 'View all ' + n + ' works'; }, fewer: 'Show fewer works', none: 'No works to show yet.', ipTag: 'Mirayi IP'
+    viewAll: function (n) { return 'View all ' + n + ' works'; }, fewer: 'Show fewer works', none: 'No works to show yet.', ipTag: 'Mirayi IP',
+    view: 'View details', close: 'Close', did: 'What we did', svc: 'Services', year: 'Year', client: 'Client', full: 'Read the full case study', ask: 'Discuss a similar project', wv: 'Watch video'
   };
   var FK = { zh: ['tz', 'xz', 'nz', 'vz'], ko: ['tk', 'xk', 'nk', 'vk'], ja: ['tj', 'xj', 'nj', 'vj'] }[lang] || [];
   var works = window.MIRAYI_WORKS || [];
@@ -46,15 +50,80 @@
 
   function card(w) {
     var h480 = Math.round(480 * w.h / w.w);
-    var title = (FK[0] && w[FK[0]]) || w.t, type = (FK[1] && w[FK[1]]) || w.type, note = (FK[2] && w[FK[2]]) || w.note, video = (FK[3] && w[FK[3]]) || w.video;
+    var title = (FK[0] && w[FK[0]]) || w.t, type = (FK[1] && w[FK[1]]) || w.type, note = (FK[2] && w[FK[2]]) || w.note;
     var tag = w.kind === 'ip' ? '<em class="tag">' + esc(note || L.ipTag) + '</em>' : (note ? '<em class="tag">' + esc(note) + '</em>' : '');
     var shp = shapeOf(w), r = ratioOf(w);
     var crop = shp !== 'natural';
     var img = '<img' + (crop ? ' class="crop" style="aspect-ratio:' + r.toFixed(4) + (FOCUS[w.f] ? ';object-position:' + FOCUS[w.f] : '') + '"' : '') + ' src="' + imgUrl(w.img, 480, crop ? Math.round(480 / r) : h480) + '" alt="' + esc(title) + ' — ' + esc(type) + '" width="' + (crop ? 480 : w.w) + '" height="' + (crop ? Math.round(480 / r) : w.h) + '" loading="lazy" decoding="async">';
-    var media = video
-      ? '<a class="work-media" href="' + esc(video) + '" target="_blank" rel="noopener noreferrer" aria-label="' + L.watchLabel + ' ' + esc(title) + L.opens + '">' + img + '<span class="play">' + L.watch + '</span></a>'
-      : '<div class="work-media">' + img + '</div>';
+    var media = '<button type="button" class="work-media" data-i="' + works.indexOf(w) + '" aria-haspopup="dialog" aria-label="' + esc(L.view) + ': ' + esc(title) + '">' + img + '<span class="play">' + L.view + '</span></button>';
     return '<figure class="work">' + media + tag + '<figcaption><strong>' + esc(title) + '</strong><span>' + esc(type) + '</span></figcaption></figure>';
+  }
+
+  // ---- project popup (opened by clicking a thumbnail)
+  var SUF = { zh: 'z', ko: 'k', ja: 'j' }[lang] || '';
+  var homeBase = (LS[lang] ? base + lang + '/' : base);
+  var dlg = null, lastBtn = null;
+
+  function field(w, k, fk) { return (SUF && w[k + SUF]) || (fk && FK[fk] && w[FK[fk]]) || w[k] || ''; }
+
+  function videosOf(w) {
+    var list = (w.vs || []).map(function (v, n) {
+      var u = v.u, l = v.l;
+      if (n === 0 && FK[3] && w[FK[3]]) u = w[FK[3]];
+      if (LS[lang] && /^Watch video( \d)?$/.test(l)) l = L.wv + (n ? ' ' + (n + 1) : '');
+      return { l: l, u: u };
+    });
+    return list;
+  }
+
+  function fillDialog(w) {
+    var title = (FK[0] && w[FK[0]]) || w.t, type = (FK[1] && w[FK[1]]) || w.type, note = (FK[2] && w[FK[2]]) || w.note;
+    var desc = field(w, 'd'), role = field(w, 'r');
+    var tag = w.kind === 'ip' ? (note || L.ipTag) : note;
+    var vids = videosOf(w);
+    var facts = '';
+    if (w.y) facts += '<div><dt>' + esc(L.year) + '</dt><dd>' + esc(w.y) + '</dd></div>';
+    if (w.c) facts += '<div><dt>' + esc(L.client) + '</dt><dd>' + esc(w.c) + '</dd></div>';
+    var h = '<button type="button" class="wd-close" aria-label="' + esc(L.close) + '">&times;</button><div class="wd-body">' +
+      '<div class="wd-pic"><img src="' + imgUrl(w.img, 900, Math.round(900 * w.h / w.w)) + '" alt="' + esc(title) + ' — ' + esc(type) + '"></div>' +
+      '<div class="wd-text">' + (tag ? '<em class="tag">' + esc(tag) + '</em>' : '') +
+      '<h2 id="wd-title">' + esc(title) + '</h2>' + (type ? '<p class="wd-type">' + esc(type) + '</p>' : '') +
+      (desc ? '<p class="wd-desc">' + esc(desc).replace(/\n/g, '<br>') + '</p>' : '') +
+      (role ? '<h3>' + esc(L.did) + '</h3><p>' + esc(role).replace(/\n/g, '<br>') + '</p>' : '') +
+      (w.sv && w.sv.length ? '<h3>' + esc(L.svc) + '</h3><ul class="chips">' + w.sv.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>' : '') +
+      (facts ? '<dl class="wd-facts">' + facts + '</dl>' : '') +
+      '<div class="wd-actions">' +
+      vids.map(function (v, n) { return '<a class="btn' + (n ? ' btn-ghost' : '') + '" href="' + esc(v.u) + '" target="_blank" rel="noopener noreferrer">' + esc(v.l) + '</a>'; }).join('') +
+      (w.pg ? '<a class="btn btn-ghost" href="' + base + 'work/' + esc(w.pg) + '">' + esc(L.full) + '</a>' : '') +
+      '<a class="wd-ask" href="' + homeBase + '#contact">' + esc(L.ask) + '</a></div></div></div>';
+    dlg.innerHTML = h;
+  }
+
+  function openWork(i, btn) {
+    var w = works[i];
+    if (!w) return;
+    if (!dlg) {
+      dlg = document.createElement('dialog');
+      dlg.className = 'work-dialog';
+      dlg.setAttribute('aria-labelledby', 'wd-title');
+      dlg.addEventListener('click', function (e) { if (e.target === dlg || e.target.closest('.wd-close')) dlg.close(); });
+      dlg.addEventListener('close', function () {
+        document.documentElement.classList.remove('wd-open');
+        if (lastBtn && lastBtn.focus) lastBtn.focus();
+      });
+      document.body.appendChild(dlg);
+    }
+    if (!dlg.showModal) {                      // very old browser: go straight to the video or case study
+      var v = videosOf(w)[0];
+      var target = (v && v.u) || (w.pg ? base + 'work/' + w.pg : '');
+      if (target) window.open(target, '_blank', 'noopener');
+      return;
+    }
+    lastBtn = btn;
+    fillDialog(w);
+    document.documentElement.classList.add('wd-open');
+    dlg.showModal();
+    dlg.scrollTop = 0;
   }
 
   document.querySelectorAll('[data-portfolio]').forEach(function (root) {
@@ -69,6 +138,10 @@
 
     var state = { kind: 'all', expanded: false };
     var grid = root.querySelector('.work-grid');
+    grid.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('.work-media');
+      if (b && b.dataset.i !== undefined) openWork(parseInt(b.dataset.i, 10), b);
+    });
     var more = root.querySelector('.work-more');
     var moreBtn = more && more.querySelector('button');
     var bar = root.querySelector('.work-filters');
