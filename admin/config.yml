@@ -271,6 +271,7 @@ collections:
               - {label: "Button text for video 2 (optional, e.g. Watch episode 1)", name: video2_label, widget: string, required: false}
               - {label: "Video link 3 (optional)", name: video3, widget: string, required: false}
               - {label: "Button text for video 3 (optional)", name: video3_label, widget: string, required: false}
+              - {label: "Facebook page of this project (optional; for Mirayi IP it is shown on the Our brands page, only when filled)", name: facebook, widget: string, required: false}
               - {label: "FULL PAGE: Create a full case-study page for this project (own web address, good for Google)", name: page, widget: boolean, default: false, required: false}
               - {label: "FULL PAGE: Web address ending (optional, letters and dashes only, e.g. nezha)", name: slug, widget: string, required: false}
               - {label: "FULL PAGE: Full case study text (optional, you can use headings, bold and links)", name: details, widget: markdown, required: false}
@@ -330,8 +331,27 @@ collections:
           - {label: Story text 1, name: story_text_1, widget: text}
           - {label: Story heading 2, name: story_heading_2, widget: string}
           - {label: Story text 2 (leave a blank line between paragraphs), name: story_text_2, widget: text}
-          - {label: What people say, name: testimonial_quote, widget: text}
-          - {label: What people say, who said it, name: testimonial_by, widget: string}
+          - {label: "Slideshow: seconds before the next picture (for example 5)", name: hero_seconds, widget: number, value_type: float, min: 1, max: 30, default: 5, required: false}
+          - label: "What people say: add as many as you like (more than one makes numbered buttons 1, 2, 3 ... and a slideshow)"
+            name: testimonials
+            widget: list
+            required: false
+            summary: "{{fields.by}}"
+            fields:
+              - {label: What they said, name: quote, widget: text}
+              - {label: Who said it (name, role, company), name: by, widget: string}
+          - {label: "What people say: seconds before the next comment (for example 8)", name: testimonial_seconds, widget: number, value_type: float, min: 2, max: 60, default: 8, required: false}
+          - {label: "Old single comment (used only if the list above is empty)", name: testimonial_quote, widget: text, required: false}
+          - {label: "Old single comment, who said it", name: testimonial_by, widget: string, required: false}
+          - {label: "Show the Facebook and LinkedIn boxes next to the client logos", name: show_social, widget: boolean, default: true, required: false}
+          - {label: "Mirayi Facebook page address (leave empty to use https://www.facebook.com/Mirayianimation/)", name: facebook_url, widget: string, required: false}
+          - {label: "Mirayi LinkedIn page address (leave empty to use the default company page)", name: linkedin_url, widget: string, required: false}
+          - label: "LinkedIn posts to show (optional, up to 3): on LinkedIn click the three dots on a post, choose Embed this post, and paste only the address that starts with https://www.linkedin.com/embed/"
+            name: linkedin_posts
+            widget: list
+            required: false
+            max: 3
+            field: {label: Post embed address, name: url, widget: string}
           - {label: Rebate heading, name: rebate_title, widget: string}
           - {label: Rebate text, name: rebate_text, widget: text}
           - {label: Contact form intro line, name: contact_intro, widget: string}
@@ -356,8 +376,16 @@ collections:
           - {label: Story text 1, name: story_text_1, widget: text}
           - {label: Story heading 2, name: story_heading_2, widget: string}
           - {label: Story text 2 (blank line between paragraphs), name: story_text_2, widget: text}
-          - {label: Testimonial, name: testimonial_quote, widget: text}
-          - {label: Testimonial by, name: testimonial_by, widget: string}
+          - label: "Testimonials (several = numbered buttons and a slideshow; same order as the English list)"
+            name: testimonials
+            widget: list
+            required: false
+            summary: "{{fields.by}}"
+            fields:
+              - {label: Comment, name: quote, widget: text}
+              - {label: Who said it, name: by, widget: string}
+          - {label: "Old single testimonial (used only if the list above is empty)", name: testimonial_quote, widget: text, required: false}
+          - {label: "Old single testimonial by", name: testimonial_by, widget: string, required: false}
           - {label: Rebate heading, name: rebate_title, widget: string}
           - {label: Rebate text, name: rebate_text, widget: text}
           - {label: Contact form intro, name: contact_intro, widget: string}
@@ -382,8 +410,16 @@ collections:
           - {label: Story text 1, name: story_text_1, widget: text}
           - {label: Story heading 2, name: story_heading_2, widget: string}
           - {label: Story text 2 (blank line between paragraphs), name: story_text_2, widget: text}
-          - {label: Testimonial, name: testimonial_quote, widget: text}
-          - {label: Testimonial by, name: testimonial_by, widget: string}
+          - label: "Testimonials (several = numbered buttons and a slideshow; same order as the English list)"
+            name: testimonials
+            widget: list
+            required: false
+            summary: "{{fields.by}}"
+            fields:
+              - {label: Comment, name: quote, widget: text}
+              - {label: Who said it, name: by, widget: string}
+          - {label: "Old single testimonial (used only if the list above is empty)", name: testimonial_quote, widget: text, required: false}
+          - {label: "Old single testimonial by", name: testimonial_by, widget: string, required: false}
           - {label: Rebate heading, name: rebate_title, widget: string}
           - {label: Rebate text, name: rebate_text, widget: text}
           - {label: Contact form intro, name: contact_intro, widget: string}
@@ -408,8 +444,16 @@ collections:
           - {label: Story text 1, name: story_text_1, widget: text}
           - {label: Story heading 2, name: story_heading_2, widget: string}
           - {label: Story text 2 (blank line between paragraphs), name: story_text_2, widget: text}
-          - {label: Testimonial, name: testimonial_quote, widget: text}
-          - {label: Testimonial by, name: testimonial_by, widget: string}
+          - label: "Testimonials (several = numbered buttons and a slideshow; same order as the English list)"
+            name: testimonials
+            widget: list
+            required: false
+            summary: "{{fields.by}}"
+            fields:
+              - {label: Comment, name: quote, widget: text}
+              - {label: Who said it, name: by, widget: string}
+          - {label: "Old single testimonial (used only if the list above is empty)", name: testimonial_quote, widget: text, required: false}
+          - {label: "Old single testimonial by", name: testimonial_by, widget: string, required: false}
           - {label: Rebate heading, name: rebate_title, widget: string}
           - {label: Rebate text, name: rebate_text, widget: text}
           - {label: Contact form intro, name: contact_intro, widget: string}
@@ -468,3 +512,6 @@ collections:
           - {label: 360 Search site verification code, name: so360_verification, widget: string, required: false}
           - {label: Shenma site verification code, name: shenma_verification, widget: string, required: false}
           - {label: Form service web address (for example from Formspree), name: form_endpoint, widget: string, required: false}
+          - {label: "Newsletter: sign-up page address from your newsletter service (easiest; shows a Subscribe button)", name: newsletter_url, widget: string, required: false}
+          - {label: "Newsletter: sign-up form address (optional; shows an email box on the site; leave empty to use the button above)", name: newsletter_action, widget: string, required: false}
+          - {label: "Newsletter: name of the email field of that form (usually email or EMAIL)", name: newsletter_field, widget: string, required: false}
