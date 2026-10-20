@@ -97,6 +97,18 @@
       "video": "https://www.youtube.com/watch?v=UTidwW3iLHk"
     },
     {
+      "img": "https://static.wixstatic.com/media/7c4f43_c736f70d2ea4414d9e9945e8dad4ff89~mv2.jpg",
+      "h": 326,
+      "note": "",
+      "type_zh": "动画制作服务",
+      "kind": "service",
+      "cat": "series",
+      "w": 250,
+      "title": "Arthur and The Minimoys",
+      "type": "Animation services",
+      "video": "https://youtu.be/rMzSo82ggTg"
+    },
+    {
       "img": "https://static.wixstatic.com/media/7c4f43_125ce7e463294bd9abbc69243d3d2176~mv2.jpg",
       "h": 353,
       "note": "",
@@ -107,6 +119,41 @@
       "title": "MegaBear",
       "type": "Action comedy cartoon series · 52 episodes × 11 min · In production 2019 to 2020",
       "video": "https://youtu.be/JK3s7masNl0"
+    },
+    {
+      "shape": "default",
+      "img": "/assets/img/capture.jpg",
+      "hidden": false,
+      "featured": false,
+      "kind": "service",
+      "cat": "series",
+      "focus": "center",
+      "title": "Quantum heroes dinoster",
+      "type": "Asset & Animation",
+      "video": "https://youtu.be/BPzDGaZSl-c?si=520l2zc0bVOdOrpU"
+    },
+    {
+      "shape": "default",
+      "img": "/assets/img/metal-cardbot.jpg",
+      "hidden": false,
+      "featured": false,
+      "kind": "service",
+      "cat": "series",
+      "focus": "center",
+      "title": "Metal cardbot",
+      "video": "https://www.youtube.com/watch?v=LApR9PvRcNs"
+    },
+    {
+      "shape": "default",
+      "img": "/assets/img/7f559ff5358aa26e998699e04043c9bd.jpg",
+      "hidden": false,
+      "featured": false,
+      "kind": "service",
+      "cat": "series",
+      "focus": "center",
+      "title": "画江湖之不良人 Season 08",
+      "type": "Animation production",
+      "video": "https://www.youtube.com/watch?v=Afc4qYSzao4"
     },
     {
       "img": "https://static.wixstatic.com/media/0e22db_eab78aab19424713a34e9f6f5229e0c7~mv2_d_1400_1980_s_2.jpg",
@@ -131,53 +178,6 @@
       "title": "Mask Masters S-01",
       "type": "Action comedy cartoon series · 26 episodes × 22 min · Completed",
       "video": "https://youtu.be/uKar998w-4w"
-    },
-    {
-      "img": "https://static.wixstatic.com/media/7c4f43_c736f70d2ea4414d9e9945e8dad4ff89~mv2.jpg",
-      "h": 326,
-      "note": "",
-      "type_zh": "动画制作服务",
-      "kind": "service",
-      "cat": "series",
-      "w": 250,
-      "title": "Arthur and The Minimoys",
-      "type": "Animation services",
-      "video": "https://youtu.be/rMzSo82ggTg"
-    },
-    {
-      "shape": "default",
-      "img": "/assets/img/capture.jpg",
-      "hidden": false,
-      "featured": false,
-      "kind": "service",
-      "cat": "series",
-      "focus": "center",
-      "title": "Quantum heroes dinoster",
-      "type": "Asset & Animation",
-      "video": "https://youtu.be/BPzDGaZSl-c?si=520l2zc0bVOdOrpU"
-    },
-    {
-      "shape": "default",
-      "img": "/assets/img/7f559ff5358aa26e998699e04043c9bd.jpg",
-      "hidden": false,
-      "featured": false,
-      "kind": "service",
-      "cat": "series",
-      "focus": "center",
-      "title": "画江湖之不良人 Season 08",
-      "type": "Animation production",
-      "video": "https://www.youtube.com/watch?v=Afc4qYSzao4"
-    },
-    {
-      "shape": "default",
-      "img": "/assets/img/metal-cardbot.jpg",
-      "hidden": false,
-      "featured": false,
-      "kind": "service",
-      "cat": "series",
-      "focus": "center",
-      "title": "Metal cardbot",
-      "video": "https://www.youtube.com/watch?v=LApR9PvRcNs"
     },
     {
       "img": "https://static.wixstatic.com/media/7c4f43_04820ca64be74b349c5591b97f614130~mv2.jpg",
@@ -216,18 +216,6 @@
       "video": "https://youtu.be/5eAu4NElgwk"
     },
     {
-      "img": "https://static.wixstatic.com/media/7c4f43_2b6a3b2e3ca24ff391d152b84aee4bb8~mv2.jpg",
-      "h": 250,
-      "note": "",
-      "type_zh": "动作喜剧动画系列 · 26集 × 22分钟 · 已完成",
-      "kind": "ip",
-      "cat": "series",
-      "w": 250,
-      "title": "Mask Masters S-02",
-      "type": "Action comedy cartoon series · 26 episodes × 22 min · Completed",
-      "video": ""
-    },
-    {
       "img": "https://static.wixstatic.com/media/c08280_691b3906f0f543d8bea4e7a43c75ea1f~mv2_d_3509_4962_s_4_2.jpg",
       "h": 353,
       "note": "Looking for co-producer",
@@ -253,18 +241,6 @@
       "video": "https://youtu.be/1V9VqDgVW08"
     },
     {
-      "img": "https://static.wixstatic.com/media/7c4f43_76130b097f5347ffbae48c17d38e399b~mv2.jpg",
-      "h": 259,
-      "note": "",
-      "type_zh": "动画电影",
-      "kind": "service",
-      "cat": "film",
-      "w": 250,
-      "title": "Flying Tiger Running Chicken",
-      "type": "Animated feature film",
-      "video": ""
-    },
-    {
       "img": "https://static.wixstatic.com/media/0e22db_ebccde9deda943309941bd194215f135~mv2.jpg",
       "h": 274,
       "note": "",
@@ -277,6 +253,18 @@
       "video": "https://youtu.be/R2MUosF7-f0"
     },
     {
+      "img": "https://static.wixstatic.com/media/7c4f43_2b6a3b2e3ca24ff391d152b84aee4bb8~mv2.jpg",
+      "h": 250,
+      "note": "",
+      "type_zh": "动作喜剧动画系列 · 26集 × 22分钟 · 已完成",
+      "kind": "ip",
+      "cat": "series",
+      "w": 250,
+      "title": "Mask Masters S-02",
+      "type": "Action comedy cartoon series · 26 episodes × 22 min · Completed",
+      "video": ""
+    },
+    {
       "img": "https://static.wixstatic.com/media/c08280_e9feed20b8164a9db22a901444c2a6ed~mv2.jpg",
       "h": 353,
       "note": "",
@@ -286,6 +274,18 @@
       "w": 250,
       "title": "Chi Chi",
       "type": "Animation services",
+      "video": ""
+    },
+    {
+      "img": "https://static.wixstatic.com/media/7c4f43_76130b097f5347ffbae48c17d38e399b~mv2.jpg",
+      "h": 259,
+      "note": "",
+      "type_zh": "动画电影",
+      "kind": "service",
+      "cat": "film",
+      "w": 250,
+      "title": "Flying Tiger Running Chicken",
+      "type": "Animated feature film",
       "video": ""
     },
     {
