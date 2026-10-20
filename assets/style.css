@@ -355,3 +355,31 @@ footer{background:#0a0a0c;background-image:linear-gradient(rgba(255,255,255,.06)
 .prose .btn.btn-ghost{color:var(--ember)}
 .prose .chips{padding:0;list-style:none;margin:0}
 .prose .chips li{margin:0}
+
+/* social column next to the client logos, embeds, testimonial carousel */
+.clients-row{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:40px;align-items:start}
+.social-col{display:grid;gap:18px}
+.embed-card{border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:#fff}
+.embed-card h3{font-family:var(--serif);font-size:1rem;margin:0 0 10px}
+.embed-card p{color:var(--paper-dim);font-size:.9rem;line-height:1.5;margin:0 0 12px}
+.embed-box{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;background:var(--ink-2);border-radius:var(--radius);padding:14px}
+.embed-box .embed-note{font-size:.78rem;margin:0}
+.embed-box iframe{border-radius:var(--radius)}
+.embed-open{display:inline-block;margin-top:10px;font-size:.88rem;color:var(--ember)}
+.ip-social{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;align-items:start}
+.tcar.js .tc-track{display:grid}
+.tcar.js .tc-slide{grid-area:1/1;opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
+.tcar.js .tc-slide.on{opacity:1;visibility:visible}
+.tc-nav{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:26px;flex-wrap:wrap}
+.tc-num,.tc-arrow{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--paper);font:inherit;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.tc-arrow{font-size:1.4rem;line-height:1}
+.tc-num:hover,.tc-arrow:hover{border-color:var(--ember);color:var(--ember)}
+.tc-num[aria-current="true"]{background:var(--ember);border-color:var(--ember);color:#fff}
+@media(max-width:900px){.clients-row{grid-template-columns:1fr;gap:26px}}
+
+.newsletter .nl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;align-items:center}
+.newsletter h2{margin-bottom:8px}
+.nl-form{display:flex;gap:10px;flex-wrap:wrap}
+.nl-form input{flex:1 1 220px;min-width:0;padding:13px 14px;border:1px solid var(--line);border-radius:2px;font:inherit;background:#fff;color:var(--paper)}
+.nl-small{color:var(--paper-dim);font-size:.8rem;margin-top:10px}
+@media(max-width:760px){.newsletter .nl{grid-template-columns:1fr;gap:18px}}
