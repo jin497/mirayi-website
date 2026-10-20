@@ -127,6 +127,19 @@ def optimize_images():
         print(f"shrank {done} images: {before / 1e6:.1f} MB -> {after / 1e6:.1f} MB (originals kept in _originals/)")
 
 
+UPLOAD_REF = re.compile(r"/assets/img/([A-Za-z0-9._%~() -]+?)\.(?:jpe?g|png)", re.I)
+
+
+def fix_uploaded_refs(text):
+    """Safety net for every page: a picture uploaded in /admin as .jpg/.png is turned into .webp by the build, so any
+    reference to the old name (blog text, social image, ...) is pointed at the .webp that is actually there."""
+    def sub(m):
+        name = m.group(0)
+        f = ROOT / name.lstrip("/")
+        return name if f.is_file() or not f.with_suffix(".webp").is_file() else name[: -len(f.suffix)] + ".webp"
+    return UPLOAD_REF.sub(sub, text)
+
+
 def loc(path):
     """Site-absolute path ('/assets/..') -> link that also works in the _preview folder."""
     if not PREVIEW:
@@ -199,7 +212,7 @@ def dims_of(src, w=None, h=None):
     if w and h:
         return int(w), int(h)
     mid = media_id(src)
-    f = local_file(mid) if mid else (ROOT / src.lstrip("/") if src.startswith("/") else None)
+    f = local_file(mid) if mid else (ROOT / uploaded(src).lstrip("/") if src.startswith("/") else None)
     if f and pathlib.Path(f).is_file():
         sz = image_size(f)
         if sz:
@@ -608,7 +621,7 @@ def render(p):
 """
     dest = OUT / (p["path"] + "/index.html" if p["path"] in LANGS else p["path"] + ".html" if p["path"] else "index.html")
     dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(doc, encoding="utf-8")
+    dest.write_text(fix_uploaded_refs(doc), encoding="utf-8")
 
 
 # ---------------------------------------------------------------- shared blocks
@@ -1449,7 +1462,7 @@ def write_404():
 <script src="{a('site.js')}" defer></script>
 </body></html>
 """
-    (OUT / "404.html").write_text(doc, encoding="utf-8")
+    (OUT / "404.html").write_text(fix_uploaded_refs(doc), encoding="utf-8")
 
 
 def write_works():
@@ -1463,7 +1476,7 @@ def write_works():
         elif mid:
             img = "/assets/img/" + local_file(mid).name
         else:
-            img = src if src.startswith("http") else "/" + src.lstrip("/")
+            img = src if src.startswith("http") else uploaded("/" + src.lstrip("/"))
         ww, hh = dims_of(src if not mid else src, w.get("w"), w.get("h"))
         if w.get("w") and w.get("h"):
             ww, hh = w["w"], w["h"]
