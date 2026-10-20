@@ -256,18 +256,50 @@ collections:
                   - {label: Bottom, value: bottom}
                   - {label: Left, value: left}
                   - {label: Right, value: right}
-              - {label: YouTube link (optional, makes the picture clickable), name: video, widget: string, required: false}
+              - {label: "POPUP: Short description (2 to 4 sentences, shown when a visitor clicks the thumbnail)", name: summary, widget: text, required: false}
+              - {label: "POPUP: What Mirayi did on this project (optional)", name: role, widget: text, required: false}
+              - label: "POPUP: Services we provided (optional, add one per line item)"
+                name: services
+                widget: list
+                required: false
+                field: {label: Service, name: service, widget: string}
+              - {label: "Year (optional, e.g. 2024 or 2022 to 2024)", name: year, widget: string, required: false}
+              - {label: "Client or broadcaster (optional, only if you are allowed to name them)", name: client, widget: string, required: false}
+              - {label: "Video link 1 (YouTube or other web address)", name: video, widget: string, required: false}
+              - {label: "Button text for video 1 (optional, e.g. Watch trailer)", name: video_label, widget: string, required: false}
+              - {label: "Video link 2 (optional)", name: video2, widget: string, required: false}
+              - {label: "Button text for video 2 (optional, e.g. Watch episode 1)", name: video2_label, widget: string, required: false}
+              - {label: "Video link 3 (optional)", name: video3, widget: string, required: false}
+              - {label: "Button text for video 3 (optional)", name: video3_label, widget: string, required: false}
+              - {label: "FULL PAGE: Create a full case-study page for this project (own web address, good for Google)", name: page, widget: boolean, default: false, required: false}
+              - {label: "FULL PAGE: Web address ending (optional, letters and dashes only, e.g. nezha)", name: slug, widget: string, required: false}
+              - {label: "FULL PAGE: Full case study text (optional, you can use headings, bold and links)", name: details, widget: markdown, required: false}
+              - label: "FULL PAGE: Extra pictures (optional, up to 6)"
+                name: gallery
+                widget: list
+                required: false
+                max: 6
+                summary: "{{fields.alt}}"
+                fields:
+                  - {label: Picture, name: image, widget: image}
+                  - {label: Short description of the picture, name: alt, widget: string, required: false}
               - {label: Extra tag on the picture (optional, e.g. Looking for co-producer), name: note, widget: string, required: false}
               - {label: Picture width (leave empty for a new upload), name: w, widget: number, required: false}
               - {label: Picture height (leave empty for a new upload), name: h, widget: number, required: false}
               - {label: 中文标题 (Chinese title, optional), name: title_zh, widget: string, required: false}
+              - {label: 中文简介 (Chinese popup description, optional), name: summary_zh, widget: text, required: false}
+              - {label: 中文：我们的工作 (Chinese, what we did, optional), name: role_zh, widget: text, required: false}
               - {label: 中文说明 (Chinese caption, optional), name: type_zh, widget: string, required: false}
               - {label: 中文标签 (Chinese tag, optional), name: note_zh, widget: string, required: false}
               - {label: Video link for Chinese visitors (e.g. Bilibili / Youku, optional), name: video_cn, widget: string, required: false}
               - {label: 한국어 Korean title (optional), name: title_ko, widget: string, required: false}
+              - {label: 한국어 Korean popup description (optional), name: summary_ko, widget: text, required: false}
+              - {label: 한국어 Korean what we did (optional), name: role_ko, widget: text, required: false}
               - {label: 한국어 Korean caption (optional), name: type_ko, widget: string, required: false}
               - {label: 한국어 Korean tag (optional), name: note_ko, widget: string, required: false}
               - {label: 日本語 Japanese title (optional), name: title_ja, widget: string, required: false}
+              - {label: 日本語 Japanese popup description (optional), name: summary_ja, widget: text, required: false}
+              - {label: 日本語 Japanese what we did (optional), name: role_ja, widget: text, required: false}
               - {label: 日本語 Japanese caption (optional), name: type_ja, widget: string, required: false}
               - {label: 日本語 Japanese tag (optional), name: note_ja, widget: string, required: false}
 
