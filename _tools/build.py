@@ -11,6 +11,7 @@ Requires: pip install -r requirements.txt   (markdown, pyyaml)
 import datetime
 import html
 import json
+import urllib.parse
 import pathlib
 import re
 import sys
@@ -537,6 +538,7 @@ def head(p):
     if PREVIEW:
         t.append('<meta name="robots" content="noindex">')
     t.append(f'<link rel="canonical" href="{canon}">')
+    t.append(f'<link rel="alternate" type="application/rss+xml" title="Mirayi blog" href="{SITE}/feed.xml">')
     t.append('<meta name="format-detection" content="telephone=no">')
     for attr, name, val in VERIFY:
         t.append(f'<meta {attr}="{name}" content="{val}">')
@@ -624,6 +626,159 @@ def render(p):
     dest = OUT / (p["path"] + "/index.html" if p["path"] in LANGS else p["path"] + ".html" if p["path"] else "index.html")
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(fix_uploaded_refs(doc), encoding="utf-8")
+
+
+
+# ---------------------------------------------------------------- social embeds and testimonials
+
+SOC_T = {
+    "en": dict(nl_h="Get our news by email", nl_p="New blog posts and studio news, sent to your inbox. No spam, and you can unsubscribe at any time.", nl_btn="Subscribe", nl_ph="you@company.com", nl_label="Your email address", nl_small="By subscribing you agree to receive our emails.", nl_priv="Privacy Policy", h="Follow Mirayi", fb="Facebook", fb_load="Show our latest Facebook posts", fb_open="Open our Facebook page",
+               fb_note="Loads content from Facebook only when you click.", li="LinkedIn", li_p="Company news, projects and hiring.",
+               li_follow="Follow Mirayi on LinkedIn", li_load="Show this LinkedIn post", li_note="Loads content from LinkedIn only when you click.",
+               ip_h="Follow our original IP on Facebook", ip_p="Each series has its own page with news, clips and behind-the-scenes posts.",
+               ip_open="Open the Facebook page", ip_load="Show the latest posts", people="What people say",
+               prev="Previous", nxt="Next", tc_aria="What people say about Mirayi", tc_go="Show comment"),
+    "zh": dict(nl_h="邮件订阅最新动态", nl_p="新的博客文章和工作室新闻会发送到您的邮箱。不发垃圾邮件，随时可以退订。（文章为英文）", nl_btn="订阅", nl_ph="you@company.com", nl_label="您的邮箱地址", nl_small="订阅即表示您同意接收我们的邮件。", nl_priv="隐私政策", h="关注 Mirayi", fb="Facebook", fb_load="显示最新的 Facebook 动态", fb_open="打开我们的 Facebook 主页",
+               fb_note="点击后才会从 Facebook 加载内容。", li="LinkedIn", li_p="公司动态、项目与招聘信息。",
+               li_follow="在 LinkedIn 上关注 Mirayi", li_load="显示这条 LinkedIn 动态", li_note="点击后才会从 LinkedIn 加载内容。",
+               ip_h="在 Facebook 上关注我们的原创IP", ip_p="每部作品都有自己的主页，发布新闻、片段和幕后花絮。",
+               ip_open="打开 Facebook 主页", ip_load="显示最新动态", people="客户评价",
+               prev="上一条", nxt="下一条", tc_aria="客户对 Mirayi 的评价", tc_go="查看评价"),
+    "ko": dict(nl_h="이메일로 소식 받기", nl_p="새 블로그 글과 스튜디오 소식을 이메일로 보내 드립니다. 스팸은 없으며 언제든 구독을 해지할 수 있습니다. (글은 영어로 발송됩니다)", nl_btn="구독하기", nl_ph="you@company.com", nl_label="이메일 주소", nl_small="구독하시면 당사의 이메일 수신에 동의하신 것으로 간주합니다.", nl_priv="개인정보 처리방침", h="Mirayi 팔로우", fb="Facebook", fb_load="최신 Facebook 게시물 보기", fb_open="Facebook 페이지 열기",
+               fb_note="클릭하면 그때 Facebook에서 콘텐츠를 불러옵니다.", li="LinkedIn", li_p="회사 소식, 프로젝트, 채용 정보.",
+               li_follow="LinkedIn에서 Mirayi 팔로우", li_load="이 LinkedIn 게시물 보기", li_note="클릭하면 그때 LinkedIn에서 콘텐츠를 불러옵니다.",
+               ip_h="Facebook에서 오리지널 IP 팔로우", ip_p="작품마다 소식, 클립, 제작 뒷이야기를 올리는 전용 페이지가 있습니다.",
+               ip_open="Facebook 페이지 열기", ip_load="최신 게시물 보기", people="고객 후기",
+               prev="이전", nxt="다음", tc_aria="Mirayi에 대한 고객 후기", tc_go="후기 보기"),
+    "ja": dict(nl_h="ニュースをメールで受け取る", nl_p="新しいブログ記事やスタジオのニュースをメールでお届けします。スパムはなく、いつでも配信を停止できます。（記事は英語です）", nl_btn="購読する", nl_ph="you@company.com", nl_label="メールアドレス", nl_small="購読すると、当社からのメールの受信に同意したものとみなされます。", nl_priv="プライバシーポリシー", h="Mirayi をフォロー", fb="Facebook", fb_load="Facebook の最新投稿を表示", fb_open="Facebook ページを開く",
+               fb_note="クリックしたときだけ Facebook からコンテンツを読み込みます。", li="LinkedIn", li_p="会社のニュース、プロジェクト、採用情報。",
+               li_follow="LinkedIn で Mirayi をフォロー", li_load="この LinkedIn 投稿を表示", li_note="クリックしたときだけ LinkedIn からコンテンツを読み込みます。",
+               ip_h="オリジナルIPを Facebook でフォロー", ip_p="作品ごとに、ニュースやクリップ、制作の裏側を発信する専用ページがあります。",
+               ip_open="Facebook ページを開く", ip_load="最新の投稿を表示", people="お客様の声",
+               prev="前へ", nxt="次へ", tc_aria="Mirayi についてのお客様の声", tc_go="コメントを表示"),
+}
+
+
+def ST():
+    return SOC_T.get(LANG, SOC_T["en"])
+
+
+def fb_src(url, h=520):
+    return ("https://www.facebook.com/plugins/page.php?href=" + urllib.parse.quote(url, safe="") +
+            f"&tabs=timeline&width=500&height={h}&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false")
+
+
+def embed_card(title, src, h, load, note, open_url, open_label, cls=""):
+    """A social card that only loads the third-party content after a click (faster page, no tracking before consent)."""
+    return (f'<div class="embed-card {cls}"><h3>{E(title)}</h3><div class="embed-box" style="min-height:{min(h, 200)}px">'
+            f'<button class="btn btn-ghost embed-load" type="button" data-src="{E(src)}" data-h="{h}" data-title="{E(title)}">{E(load)}</button>'
+            f'<p class="embed-note">{E(note)}</p></div>'
+            f'<a class="embed-open" href="{E(open_url)}" target="_blank" rel="noopener">{E(open_label)}</a></div>')
+
+
+def social_social():
+    """Facebook + LinkedIn column shown to the right of the client logos on the home page."""
+    if HOME.get("show_social") is False:
+        return ""
+    t = ST()
+    fb = (HOME.get("facebook_url") or dict(SOCIAL).get("Facebook") or "").strip()
+    li = (HOME.get("linkedin_url") or dict(SOCIAL).get("LinkedIn") or "").strip()
+    out = ""
+    if fb.startswith("http"):
+        out += embed_card(t["fb"], fb_src(fb), 520, t["fb_load"], t["fb_note"], fb, t["fb_open"])
+    if li.startswith("http"):
+        posts = ""
+        for x in (HOME.get("linkedin_posts") or [])[:3]:
+            src = (x if isinstance(x, str) else (x or {}).get("url", "")).strip()
+            if src.startswith("https://www.linkedin.com/embed/"):
+                posts += embed_card(t["li"], src, 480, t["li_load"], t["li_note"], li, t["li_follow"], cls="embed-post")
+        out += (f'<div class="embed-card li-card"><h3>{E(t["li"])}</h3><p>{E(t["li_p"])}</p>'
+                f'<a class="btn" href="{E(li)}" target="_blank" rel="noopener">{E(t["li_follow"])}</a></div>{posts}')
+    return f'<aside class="social-col" aria-label="{E(t["h"])}">{out}</aside>' if out else ""
+
+
+def ip_social():
+    """On the Our brands page: one Facebook card per original IP, only for the IPs that have a link."""
+    t = ST()
+    cards, seen = "", set()
+    for w in ordered_works():
+        fb = (w.get("facebook") or "").strip()
+        if w.get("kind") == "ip" and fb.startswith("http") and fb not in seen:
+            seen.add(fb)
+            same = [x for x in ordered_works() if (x.get("facebook") or "").strip() == fb]
+            name = (w.get("title_" + LANG) if LANG in LANGS else "") or w["title"]
+            if len(same) > 1:
+                name = re.sub(r"\s+(S-?\d+|Season\s*\d+)$", "", name, flags=re.I)
+            cards += embed_card(name, fb_src(fb, 480), 480, t["ip_load"], t["fb_note"], fb, t["ip_open"])
+    if not cards:
+        return ""
+    return (f'<section class="block alt"><div class="wrap"><div class="sec-head"><h2>{E(t["ip_h"])}</h2><p>{E(t["ip_p"])}</p></div>'
+            f'<div class="ip-social">{cards}</div></div></section>')
+
+
+def testimonials_html(items, seconds):
+    """'What people say': one quote, or a carousel (numbered buttons, swipe, auto-advance) when there are several."""
+    items = [(q.strip(), (b or "").strip()) for q, b in items if (q or "").strip()]
+    if not items:
+        return ""
+    t = ST()
+    heading = T()["h_quote"] if LANG in LANGS else t["people"]
+    q = "“{}”" if LANG in LANGS else '"{}"'
+    slides = "".join(f'<blockquote class="quote tc-slide{" on" if n == 0 else ""}"><p>{q.format(E(a))}</p><cite>{E(b)}</cite></blockquote>'
+                     for n, (a, b) in enumerate(items))
+    multi = len(items) > 1
+    attrs = (f' class="tcar" role="region" aria-roledescription="carousel" aria-label="{E(t["tc_aria"])}" data-seconds="{seconds}"'
+             f' data-prev="{E(t["prev"])}" data-next="{E(t["nxt"])}" data-go="{E(t["tc_go"])}"') if multi else ' class="tcar"'
+    return (f'<section class="block alt"><div class="wrap"><div class="sec-head"><h2>{heading}</h2></div>'
+            f'<div{attrs}><div class="tc-track">{slides}</div></div></div></section>')
+
+
+def newsletter_block():
+    """Subscribe box. Shown only when a form address or a hosted sign-up page is set in /admin (Contact form settings)."""
+    action = (SETTINGS.get("newsletter_action") or "").strip()
+    hosted = (SETTINGS.get("newsletter_url") or "").strip()
+    if not (action.startswith("http") or hosted.startswith("http")):
+        return ""
+    t = ST()
+    priv = f'<a href="{lu("privacy-policy")}">{E(t["nl_priv"])}</a>'
+    if action.startswith("http"):
+        field = E((SETTINGS.get("newsletter_field") or "email").strip())
+        ctl = (f'<form class="nl-form" action="{E(action)}" method="post" target="_blank" rel="noopener">'
+               f'<label class="sr" for="nl-email">{E(t["nl_label"])}</label>'
+               f'<input id="nl-email" type="email" name="{field}" required placeholder="{E(t["nl_ph"])}" autocomplete="email">'
+               f'<button class="btn" type="submit">{E(t["nl_btn"])}</button></form>')
+    else:
+        ctl = f'<p><a class="btn" href="{E(hosted)}" target="_blank" rel="noopener">{E(t["nl_btn"])}</a></p>'
+    return (f'<section class="block newsletter" id="subscribe"><div class="wrap nl"><div><h2>{E(t["nl_h"])}</h2><p>{E(t["nl_p"])}</p></div>'
+            f'<div>{ctl}<p class="nl-small">{E(t["nl_small"])} {priv}.</p></div></div></section>')
+
+
+def feed_xml():
+    """RSS feed of the blog (/feed.xml). A newsletter service can read it and email each new post automatically."""
+    import email.utils
+    items = ""
+    for p in POSTS[:30]:
+        dt = datetime.datetime.strptime(p["published"][:10], "%Y-%m-%d").replace(hour=9, tzinfo=datetime.timezone.utc)
+        img = absu(p["img"][0], p["img"][1], p["img"][2]) if p["img"][0] else ""
+        ext = img.rsplit(".", 1)[-1].lower().split("?")[0] if img else ""
+        mime = {"png": "image/png", "webp": "image/webp", "gif": "image/gif"}.get(ext, "image/jpeg")
+        items += ("<item>"
+                  f"<title>{E(p['h1'])}</title><link>{SITE}/post/{p['slug']}</link><guid isPermaLink=\"true\">{SITE}/post/{p['slug']}</guid>"
+                  f"<pubDate>{email.utils.format_datetime(dt)}</pubDate><dc:creator>{E(p['author'])}</dc:creator>"
+                  f"<description>{E(p['excerpt'])}</description>"
+                  + (f'<enclosure url="{E(img)}" length="0" type="{mime}"/>' if img else "") + "</item>\n")
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">'
+            f'<channel><title>Mirayi: animation insights and studio news</title><link>{SITE}/blog</link>'
+            f'<atom:link href="{SITE}/feed.xml" rel="self" type="application/rss+xml"/>'
+            "<description>Tips, trends and behind-the-scenes stories from Mirayi, a 3D animation studio in Malaysia.</description>"
+            "<language>en</language>\n" + items + "</channel></rss>\n")
+
+
+def home_testimonials(src, lang_file=False):
+    items = [(x.get("quote", ""), x.get("by", "")) for x in (src.get("testimonials") or [])]
+    if not items:
+        items = [(src.get("testimonial_quote", ""), src.get("testimonial_by", ""))]
+    return testimonials_html(items, HOME.get("testimonial_seconds") or 8)
 
 
 # ---------------------------------------------------------------- shared blocks
@@ -827,7 +982,7 @@ def body_home():
     global HERO_PRELOAD
     HERO_PRELOAD = wix(HOME["hero_slides"][0]["image"], 1600, 900)
     return f"""
-<section class="hero-slider" aria-roledescription="carousel" aria-label="Featured work">
+<section class="hero-slider" data-seconds="{HOME.get('hero_seconds') or 5}" aria-roledescription="carousel" aria-label="Featured work">
 {slides}
 <div class="hero-text"><h1>{E(HOME["hero_title"])}</h1>
 <p class="lead">{E(HOME["hero_lead"])}</p>
@@ -838,7 +993,7 @@ def body_home():
 
 <section class="block"><div class="wrap">
 <div class="sec-head"><h2>Our Clientele</h2><p>Studios, broadcasters and game publishers across the U.S., Europe and Asia.</p></div>
-<div class="clients">{logos}</div>
+<div class="clients-row"><div class="clients">{logos}</div>{social_social()}</div>
 </div></section>
 
 <section class="block svc-sec"><div class="wrap">
@@ -876,8 +1031,7 @@ def body_home():
 <p><a href="{u('whoweare')}">Know more about Mirayi</a></p>
 </div></div></section>
 
-<section class="block alt"><div class="wrap"><div class="sec-head"><h2>What people say</h2></div>
-<blockquote class="quote"><p>"{E(HOME["testimonial_quote"])}"</p><cite>{E(HOME["testimonial_by"])}</cite></blockquote></div></section>
+{home_testimonials(HOME)}
 
 <section class="block"><div class="wrap"><div class="inc">
 <div><h2>{E(HOME["rebate_title"])}</h2>
@@ -891,6 +1045,7 @@ def body_home():
 <div class="pct">30%<small>FIMI cash rebate on service projects</small></div>
 </div></div></section>
 
+{newsletter_block()}
 {contact_section()}
 """
 
@@ -960,6 +1115,7 @@ def body_brands():
 <section class="block"><div class="wrap">
 {portfolio(filters=False, kinds="ip")}
 </div></section>
+{ip_social()}
 {contact_cta("Interested in co-producing? Talk to us.")}
 """
 
@@ -1101,6 +1257,7 @@ def make_tr_body(g):
         return f"""
 {page_hero(E(g['h1']), intro, extra=extra)}
 {port}{gal}{prose}
+{ip_social() if g["slug"] == "mirayibrand" else ""}
 {faq}
 {contact_cta_tr()}
 """
@@ -1134,7 +1291,7 @@ def body_home_tr():
         return f'<div class="svc-panel"><h3>{E(title)}</h3><p>{E(intro)}</p><ul>{lis}</ul></div>'
 
     return f"""
-<section class="hero-slider" aria-roledescription="carousel" aria-label="{t['hero_aria']}">
+<section class="hero-slider" data-seconds="{HOME.get('hero_seconds') or 5}" aria-roledescription="carousel" aria-label="{t['hero_aria']}">
 {slides}
 <div class="hero-text"><h1>{E(Z['hero_title'])}</h1>
 <p class="lead">{E(Z['hero_lead'])}</p>
@@ -1144,7 +1301,7 @@ def body_home_tr():
 
 <section class="block"><div class="wrap">
 <div class="sec-head"><h2>{t["h_clients"]}</h2><p>{E(Z['clients_intro'])}</p></div>
-<div class="clients">{logos}</div>
+<div class="clients-row"><div class="clients">{logos}</div>{social_social()}</div>
 </div></section>
 
 <section class="block svc-sec"><div class="wrap">
@@ -1174,8 +1331,7 @@ def body_home_tr():
 <p><a href="{lu('whoweare')}">{t["more_about"]}</a></p>
 </div></div></section>
 
-<section class="block alt"><div class="wrap"><div class="sec-head"><h2>{t["h_quote"]}</h2></div>
-<blockquote class="quote"><p>“{E(Z['testimonial_quote'])}”</p><cite>{E(Z['testimonial_by'])}</cite></blockquote></div></section>
+{home_testimonials(Z)}
 
 <section class="block"><div class="wrap"><div class="inc">
 <div><h2>{E(Z['rebate_title'])}</h2>
@@ -1189,6 +1345,7 @@ def body_home_tr():
 <div class="pct">30%<small>{t["pct"]}</small></div>
 </div></div></section>
 
+{newsletter_block()}
 {contact_section()}
 """
 
@@ -1235,6 +1392,7 @@ def make_post_body(post):
 <div class="prose" style="max-width:none">{md_to_html(post['md'])}</div>
 <aside class="recent"><h2>Recent posts</h2>{others}<a href="{u('blog')}">See all</a></aside>
 </div></article>
+{newsletter_block()}
 {contact_cta("Have a project in mind? Let's talk.")}
 """
     return body
@@ -1268,6 +1426,8 @@ def make_case_body(w):
             parts.append('<h2>Watch</h2><p class="case-videos">' + "".join(
                 f'<a class="btn{" btn-ghost" if n else ""}" href="{E(uu)}" target="_blank" rel="noopener noreferrer">{E(l)}</a>'
                 for n, (l, uu) in enumerate(vids)) + "</p>")
+        if (w.get("facebook") or "").startswith("http"):
+            parts.append(f'<p><a class="btn btn-ghost" href="{E(w["facebook"].strip())}" target="_blank" rel="noopener">Follow {E(w["title"])} on Facebook</a></p>')
         gal = "".join(
             f'<img src="{wix(g["image"], 900, 600)}" alt="{E(g.get("alt") or w["title"])}" loading="lazy">'
             for g in (w.get("gallery") or []) if g.get("image"))
@@ -1316,6 +1476,7 @@ def body_blog():
     return f"""
 {page_hero("Animation insights &amp; industry tips", "Tips, trends, and behind-the-scenes stories from the animation industry—crafted for game producers, filmmakers, and creative directors worldwide.")}
 <section class="block"><div class="wrap"><div class="posts">{cards}</div></div></section>
+{newsletter_block()}
 """
 
 
@@ -1355,6 +1516,7 @@ def body_contact():
 <li>Length or number of episodes, and a style reference or sample if you have one.</li>
 <li>Which production steps you need, and your delivery date and format.</li>
 <li>Scripts, storyboards or designs, if they exist. Ask us about the <a href="{u('fimi-cash-rebate-animation')}">FIMI 30% cash rebate</a> if your project may qualify.</li></ul></div></section>
+{newsletter_block()}
 {contact_section()}
 """
 
@@ -1545,6 +1707,7 @@ def write_static():
         + "\n".join(urls) + "\n</urlset>\n", encoding="utf-8")
     (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: {SITE}/sitemap.xml\n", encoding="utf-8")
     (ROOT / "llms.txt").write_text(llms_txt(), encoding="utf-8")
+    (ROOT / "feed.xml").write_text(feed_xml(), encoding="utf-8")
     (ROOT / "_redirects").write_text(
         "# Old Wix URLs that no longer have their own page -> nearest new page (permanent 301)\n"
         "/jobs /join-with-us 301\n"
@@ -1612,6 +1775,8 @@ def write_works():
             item["c"] = w["client"]
         if w in CASES:
             item["pg"] = slug_of(w)
+        if (w.get("facebook") or "").startswith("http"):
+            item["fb"] = w["facebook"].strip()
         _v = [{"l": l, "u": uu} for l, uu in videos_of(w)]
         if _v:
             item["vs"] = _v
